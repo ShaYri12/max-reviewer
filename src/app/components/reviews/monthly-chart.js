@@ -22,11 +22,35 @@ ChartJS.register(
   Legend
 );
 
-const data = [
-  { month: "Ene", value: 115 },
-  { month: "Feb", value: 140 },
-  { month: "Mar", value: 100 },
-];
+const chartData = {
+  "Últimos 3 meses": [
+    { month: "Ene", value: 115 },
+    { month: "Feb", value: 140 },
+    { month: "Mar", value: 100 },
+  ],
+  "Últimos 6 meses": [
+    { month: "Oct", value: 90 },
+    { month: "Nov", value: 105 },
+    { month: "Dic", value: 125 },
+    { month: "Ene", value: 115 },
+    { month: "Feb", value: 140 },
+    { month: "Mar", value: 100 },
+  ],
+  "Último año": [
+    { month: "Abr", value: 80 },
+    { month: "May", value: 95 },
+    { month: "Jun", value: 110 },
+    { month: "Jul", value: 130 },
+    { month: "Ago", value: 145 },
+    { month: "Sep", value: 135 },
+    { month: "Oct", value: 90 },
+    { month: "Nov", value: 105 },
+    { month: "Dic", value: 125 },
+    { month: "Ene", value: 115 },
+    { month: "Feb", value: 140 },
+    { month: "Mar", value: 100 },
+  ],
+};
 
 export default function MonthlyChart() {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,15 +75,15 @@ export default function MonthlyChart() {
     setIsOpen(false);
   };
 
-  const chartData = {
-    labels: data.map((item) => item.month),
+  const currentChartData = {
+    labels: chartData[selectedOption].map((item) => item.month),
     datasets: [
       {
-        data: data.map((item) => item.value),
+        data: chartData[selectedOption].map((item) => item.value),
         borderColor: "#FFD700",
-        backgroundColor: "white", // This ensures the line connecting points is not filled
-        pointBackgroundColor: "white", // This makes the points hollow
-        pointBorderColor: "#FFD700", // This is the color of the point's border
+        backgroundColor: "white",
+        pointBackgroundColor: "white",
+        pointBorderColor: "#FFD700",
         pointRadius: 6,
         pointHoverRadius: 8,
         pointBorderWidth: 2,
@@ -134,8 +158,8 @@ export default function MonthlyChart() {
       point: {
         radius: 6,
         borderWidth: 2,
-        backgroundColor: "white", // This makes the inside of the circle white (hollow)
-        borderColor: "#FFD700", // This is the color of the circle's border
+        backgroundColor: "white",
+        borderColor: "#FFD700",
         hoverBackgroundColor: "#FFD700",
         hoverBorderColor: "#FFD700",
       },
@@ -169,24 +193,15 @@ export default function MonthlyChart() {
             {isOpen && (
               <div className="absolute top-full left-0 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg z-10">
                 <div className="py-1">
-                  <button
-                    className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
-                    onClick={() => handleOptionSelect("Últimos 3 meses")}
-                  >
-                    Últimos 3 meses
-                  </button>
-                  <button
-                    className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
-                    onClick={() => handleOptionSelect("Últimos 6 meses")}
-                  >
-                    Últimos 6 meses
-                  </button>
-                  <button
-                    className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
-                    onClick={() => handleOptionSelect("Último año")}
-                  >
-                    Último año
-                  </button>
+                  {Object.keys(chartData).map((option) => (
+                    <button
+                      key={option}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
+                      onClick={() => handleOptionSelect(option)}
+                    >
+                      {option}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
@@ -195,7 +210,7 @@ export default function MonthlyChart() {
 
         {/* Graph */}
         <div className="h-[260px] -mx-2">
-          <Line data={chartData} options={options} />
+          <Line data={currentChartData} options={options} />
         </div>
       </div>
     </div>
