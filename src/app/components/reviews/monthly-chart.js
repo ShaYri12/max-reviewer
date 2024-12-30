@@ -89,7 +89,7 @@ export default function MonthlyChart() {
         pointBorderWidth: 2,
         pointHoverBorderWidth: 3,
         borderWidth: 2,
-        tension: 0,
+        tension: 0.4, // Change this from 0 to 0.4 for a curvy line
       },
     ],
   };
@@ -153,7 +153,7 @@ export default function MonthlyChart() {
     },
     elements: {
       line: {
-        tension: 0,
+        tension: 0.4, // Change this from 0 to 0.4 for a curvy line
       },
       point: {
         radius: 6,
