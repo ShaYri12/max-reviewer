@@ -25,7 +25,7 @@ const ProfileDropdown = () => {
   };
 
   return (
-    <div className="relative z-[100]" ref={dropdownRef}>
+    <div className="relative z-[20]" ref={dropdownRef}>
       <button onClick={() => setIsOpen(!isOpen)} className="text-white">
         <img
           src="/profile.svg"
