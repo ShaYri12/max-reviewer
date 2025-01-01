@@ -119,9 +119,9 @@ export default function MonthlyChart({ onDataChange }) {
         pointBackgroundColor: "white",
         pointBorderColor: "#FFD700",
         pointRadius: 6,
-        pointHoverRadius: 8,
+        pointHoverRadius: 6,
         pointBorderWidth: 2,
-        pointHoverBorderWidth: 3,
+        pointHoverBorderWidth: 2,
         borderWidth: 2,
         tension: 0.4,
       },
@@ -194,13 +194,9 @@ export default function MonthlyChart({ onDataChange }) {
         borderWidth: 2,
         backgroundColor: "white",
         borderColor: "#FFD700",
-        hoverBackgroundColor: "#FFD700",
+        hoverBackgroundColor: "#FFFFFF",
         hoverBorderColor: "#FFD700",
       },
-    },
-    hover: {
-      mode: "nearest",
-      intersect: true,
     },
   };
 
