@@ -23,36 +23,69 @@ ChartJS.register(
 );
 
 const chartData = {
-  "Últimos 3 meses": [
-    { month: "Ene", value: 115 },
-    { month: "Feb", value: 140 },
-    { month: "Mar", value: 100 },
-  ],
-  "Últimos 6 meses": [
-    { month: "Oct", value: 90 },
-    { month: "Nov", value: 105 },
-    { month: "Dic", value: 125 },
-    { month: "Ene", value: 115 },
-    { month: "Feb", value: 140 },
-    { month: "Mar", value: 100 },
-  ],
-  "Último año": [
-    { month: "Abr", value: 80 },
-    { month: "May", value: 95 },
-    { month: "Jun", value: 110 },
-    { month: "Jul", value: 130 },
-    { month: "Ago", value: 145 },
-    { month: "Sep", value: 135 },
-    { month: "Oct", value: 90 },
-    { month: "Nov", value: 105 },
-    { month: "Dic", value: 125 },
-    { month: "Ene", value: 115 },
-    { month: "Feb", value: 140 },
-    { month: "Mar", value: 100 },
-  ],
+  "Últimos 3 meses": {
+    data: [
+      { month: "Ene", value: 115 },
+      { month: "Feb", value: 140 },
+      { month: "Mar", value: 100 },
+    ],
+    totalReviews: 347,
+    averageRating: 4.87,
+    ratings: [
+      { stars: 5, percentage: 90 },
+      { stars: 4, percentage: 7 },
+      { stars: 3, percentage: 2 },
+      { stars: 2, percentage: 1 },
+      { stars: 1, percentage: 0 },
+    ],
+  },
+  "Últimos 6 meses": {
+    data: [
+      { month: "Oct", value: 90 },
+      { month: "Nov", value: 105 },
+      { month: "Dic", value: 125 },
+      { month: "Ene", value: 115 },
+      { month: "Feb", value: 140 },
+      { month: "Mar", value: 100 },
+    ],
+    totalReviews: 275,
+    averageRating: 4.5,
+    ratings: [
+      { stars: 5, percentage: 80 },
+      { stars: 4, percentage: 15 },
+      { stars: 3, percentage: 3 },
+      { stars: 2, percentage: 1 },
+      { stars: 1, percentage: 1 },
+    ],
+  },
+  "Último año": {
+    data: [
+      { month: "Abr", value: 80 },
+      { month: "May", value: 95 },
+      { month: "Jun", value: 110 },
+      { month: "Jul", value: 130 },
+      { month: "Ago", value: 145 },
+      { month: "Sep", value: 135 },
+      { month: "Oct", value: 90 },
+      { month: "Nov", value: 105 },
+      { month: "Dic", value: 125 },
+      { month: "Ene", value: 115 },
+      { month: "Feb", value: 140 },
+      { month: "Mar", value: 100 },
+    ],
+    totalReviews: 347,
+    averageRating: 4.63,
+    ratings: [
+      { stars: 5, percentage: 90 },
+      { stars: 4, percentage: 7 },
+      { stars: 3, percentage: 2 },
+      { stars: 2, percentage: 1 },
+      { stars: 1, percentage: 0 },
+    ],
+  },
 };
 
-export default function MonthlyChart() {
+export default function MonthlyChart({ onDataChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Últimos 3 meses");
   const dropdownRef = useRef(null);
@@ -73,13 +106,14 @@ export default function MonthlyChart() {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
+    onDataChange(chartData[option]);
   };
 
   const currentChartData = {
-    labels: chartData[selectedOption].map((item) => item.month),
+    labels: chartData[selectedOption].data.map((item) => item.month),
     datasets: [
       {
-        data: chartData[selectedOption].map((item) => item.value),
+        data: chartData[selectedOption].data.map((item) => item.value),
         borderColor: "#FFD700",
         backgroundColor: "white",
         pointBackgroundColor: "white",
@@ -89,7 +123,7 @@ export default function MonthlyChart() {
         pointBorderWidth: 2,
         pointHoverBorderWidth: 3,
         borderWidth: 2,
-        tension: 0.4, // Change this from 0 to 0.4 for a curvy line
+        tension: 0.4,
       },
     ],
   };
@@ -153,7 +187,7 @@ export default function MonthlyChart() {
     },
     elements: {
       line: {
-        tension: 0.4, // Change this from 0 to 0.4 for a curvy line
+        tension: 0.4,
       },
       point: {
         radius: 6,

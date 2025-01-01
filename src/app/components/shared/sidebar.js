@@ -1,6 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation"; // Import usePathname hook
+
 const Sidebar = ({ isOpen, onClose }) => {
+  const pathname = usePathname(); // Get the current pathname
+
   return (
     <div
       className={`fixed left-0 top-0 h-full w-64 bg-[#17375F] transform transition-transform duration-300 ease-in-out ${
@@ -18,29 +23,37 @@ const Sidebar = ({ isOpen, onClose }) => {
       </div>
 
       <nav className="py-4">
-        <a
-          href="#"
-          className="flex items-center gap-3 px-4 py-3 bg-[#6DC1E6] text-white"
+        <Link
+          href="/reviews"
+          className={`flex items-center gap-3 px-4 py-3 ${
+            pathname === "/reviews"
+              ? "bg-[#6DC1E6] text-white"
+              : "text-white hover:bg-[#2C4A72]"
+          }`}
         >
           <img
             src="/dashboard.svg"
             className="w-[20px] h-[20px] object-contain overflow-hidden"
           />
           <span>Mi dashboard</span>
-        </a>
+        </Link>
 
-        <a
-          href="#"
-          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-[#2C4A72] transition-colors"
+        <Link
+          href="/interface"
+          className={`flex items-center gap-3 px-4 py-3 ${
+            pathname === "/interface"
+              ? "bg-[#6DC1E6] text-white"
+              : "text-white hover:bg-[#2C4A72]"
+          }`}
         >
           <img
             src="/settings.svg"
             className="w-[20px] h-[20px] object-contain overflow-hidden"
           />
           <span>Configuración</span>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="#"
           className="flex items-center gap-3 px-4 py-3 text-white hover:bg-[#2C4A72] transition-colors"
         >
@@ -49,9 +62,9 @@ const Sidebar = ({ isOpen, onClose }) => {
             className="w-[20px] h-[20px] object-contain overflow-hidden"
           />
           <span>Contraseña</span>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="#"
           className="flex items-center gap-3 px-4 py-3 text-white hover:bg-[#2C4A72] transition-colors"
         >
@@ -60,7 +73,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             className="w-[20px] h-[20px] object-contain overflow-hidden"
           />
           <span>Planes</span>
-        </a>
+        </Link>
       </nav>
 
       <button className="absolute bottom-8 left-0 right-0 mx-4 flex items-center justify-center gap-3 px-4 py-3 bg-[#6DC1E6] text-white rounded-lg">

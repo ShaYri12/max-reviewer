@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/shared/navbar";
 import Footer from "../components/shared/footer";
@@ -10,22 +9,26 @@ import withAuth from "../utils/with-authenticated";
 import MonthlyChart from "../components/reviews/monthly-chart";
 
 const ReviewPage = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState("3months");
   const router = useRouter();
+  const [reviewData, setReviewData] = useState({
+    totalReviews: 347,
+    averageRating: 4.87,
+    ratings: [
+      { stars: 5, percentage: 90 },
+      { stars: 4, percentage: 7 },
+      { stars: 3, percentage: 2 },
+      { stars: 2, percentage: 1 },
+      { stars: 1, percentage: 0 },
+    ],
+  });
 
-  const ratings = [
-    { stars: 5, percentage: 90 },
-    { stars: 4, percentage: 7 },
-    { stars: 3, percentage: 2 },
-    { stars: 2, percentage: 1 },
-    { stars: 1, percentage: 0 },
-  ];
-
-  const monthlyData = [
-    { month: "Ene", count: 100 },
-    { month: "Feb", count: 150 },
-    { month: "Mar", count: 75 },
-  ];
+  const handleDataChange = (newData) => {
+    setReviewData({
+      totalReviews: newData.totalReviews,
+      averageRating: newData.averageRating,
+      ratings: newData.ratings,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#17375F]">
@@ -36,7 +39,7 @@ const ReviewPage = () => {
           <div className="overflow-auto p-6 space-y-8">
             <div className="flex items-center justify-between">
               <h1 className="text-lg text-[#6C7278] font-semibold">
-                Reviews totales: 347
+                Reviews totales: {reviewData.totalReviews}
               </h1>
               <button onClick={() => router.back()} className="text-[#6DC1E6]">
                 <img src="/close.svg" alt="Close" width={20} height={20} />
@@ -44,7 +47,7 @@ const ReviewPage = () => {
             </div>
             <div className="flex gap-5 ">
               <div className="space-y-2 w-[60%]">
-                {ratings.map(({ stars, percentage }) => (
+                {reviewData.ratings.map(({ stars, percentage }) => (
                   <div key={stars} className="flex items-center gap-2">
                     <span className="w-2 text-xs font-[400] text-[#6C7278]">
                       {stars}
@@ -62,14 +65,16 @@ const ReviewPage = () => {
                 <div className="text-[21px] text-[#6C7278] font-light">
                   Calificación
                 </div>
-                <div className="text-6xl font-[500] text-[#6C7278]">4.87</div>
+                <div className="text-6xl font-[500] text-[#6C7278]">
+                  {reviewData.averageRating.toFixed(2)}
+                </div>
                 <div className="flex justify-center gap-1 mt-[2px]">
-                  <Rating />
+                  <Rating averageReview={reviewData.averageRating} />
                 </div>
               </div>
             </div>
 
-            <MonthlyChart />
+            <MonthlyChart onDataChange={handleDataChange} />
           </div>
 
           {/* Footer */}
