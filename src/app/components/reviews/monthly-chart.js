@@ -29,7 +29,7 @@ const chartData = {
       { month: "Feb", value: 140 },
       { month: "Mar", value: 100 },
     ],
-    totalReviews: 347,
+    totalReviews: 355, // Corrected total
     averageRating: 4.87,
     ratings: [
       { stars: 5, percentage: 90 },
@@ -48,7 +48,7 @@ const chartData = {
       { month: "Feb", value: 140 },
       { month: "Mar", value: 100 },
     ],
-    totalReviews: 275,
+    totalReviews: 675, // Corrected total
     averageRating: 4.5,
     ratings: [
       { stars: 5, percentage: 80 },
@@ -73,7 +73,7 @@ const chartData = {
       { month: "Feb", value: 140 },
       { month: "Mar", value: 100 },
     ],
-    totalReviews: 347,
+    totalReviews: 1275, // Corrected total
     averageRating: 4.63,
     ratings: [
       { stars: 5, percentage: 90 },
