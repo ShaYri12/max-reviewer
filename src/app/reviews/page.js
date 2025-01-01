@@ -11,7 +11,7 @@ import MonthlyChart from "../components/reviews/monthly-chart";
 const ReviewPage = () => {
   const router = useRouter();
   const [reviewData, setReviewData] = useState({
-    totalReviews: 347,
+    totalReviews: 355,
     averageRating: 4.87,
     ratings: [
       { stars: 5, percentage: 90 },
