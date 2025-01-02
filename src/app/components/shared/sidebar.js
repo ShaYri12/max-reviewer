@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Import usePathname hook
+import { usePathname, useRouter } from "next/navigation"; // Import usePathname hook
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const router = useRouter();
   const pathname = usePathname(); // Get the current pathname
+  const handleLogout = () => {
+    router.push("signup");
+    localStorage.removeItem("token");
+  };
 
   return (
     <div
@@ -76,7 +81,10 @@ const Sidebar = ({ isOpen, onClose }) => {
         </Link>
       </nav>
 
-      <button className="absolute bottom-8 left-0 right-0 mx-4 flex items-center justify-center gap-3 px-4 py-3 bg-[#6DC1E6] text-white rounded-lg">
+      <button
+        onClick={handleLogout}
+        className="absolute bottom-8 left-0 right-0 mx-4 flex items-center justify-center gap-3 px-4 py-3 bg-[#6DC1E6] text-white rounded-lg"
+      >
         <span>Cerrar sesión</span>
       </button>
     </div>

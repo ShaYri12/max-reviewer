@@ -14,11 +14,16 @@ const LoginForm = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // Track "Remember me" checkbox
   const [token, setToken] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleRememberMeChange = () => {
+    setRememberMe(!rememberMe);
   };
 
   const handleSubmit = async (e) => {
@@ -36,7 +41,15 @@ const LoginForm = () => {
       if (response.status === 200 || response.status === 201) {
         const receivedToken = response.data?.data?.token;
         setToken(receivedToken);
-        localStorage.setItem("authToken", receivedToken);
+
+        // Store the token in localStorage with remember me logic
+        if (rememberMe) {
+          localStorage.setItem("authToken", receivedToken); // Save token with remember me
+          localStorage.setItem("rememberMe", "true"); // Indicate "Remember me" is enabled
+        } else {
+          localStorage.setItem("authToken", receivedToken); // Save token for session
+          localStorage.removeItem("rememberMe"); // Remove "Remember me" flag if not checked
+        }
 
         toast.success("Inicio de sesión exitoso");
         router.push("/interface");
@@ -105,7 +118,12 @@ const LoginForm = () => {
               </div>
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 text-gray-600">
-                  <input type="checkbox" className="rounded border-gray-300" />
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={handleRememberMeChange} // Handle "Remember me" toggle
+                    className="rounded border-gray-300"
+                  />
                   Recuérdame
                 </label>
                 <a href="#" className="text-[#6DC1E6]">

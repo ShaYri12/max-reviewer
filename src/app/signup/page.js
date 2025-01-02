@@ -93,7 +93,7 @@ const SignupForm = () => {
         simulatedResponse.data?.data
       ) {
         toast.success("¡Cuenta creada exitosamente!");
-        router.push("/success");
+        router.push("/login");
       } else {
         toast.error("Error al crear la cuenta. Por favor, inténtalo de nuevo.");
       }
