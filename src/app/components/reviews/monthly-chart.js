@@ -22,70 +22,7 @@ ChartJS.register(
   Legend
 );
 
-const chartData = {
-  "Últimos 3 meses": {
-    data: [
-      { month: "Ene", value: 115 },
-      { month: "Feb", value: 140 },
-      { month: "Mar", value: 100 },
-    ],
-    totalReviews: 355,
-    averageRating: 4.87,
-    ratings: [
-      { stars: 5, percentage: 90 },
-      { stars: 4, percentage: 7 },
-      { stars: 3, percentage: 2 },
-      { stars: 2, percentage: 1 },
-      { stars: 1, percentage: 0 },
-    ],
-  },
-  "Últimos 6 meses": {
-    data: [
-      { month: "Oct", value: 90 },
-      { month: "Nov", value: 105 },
-      { month: "Dic", value: 125 },
-      { month: "Ene", value: 115 },
-      { month: "Feb", value: 140 },
-      { month: "Mar", value: 100 },
-    ],
-    totalReviews: 675,
-    averageRating: 4.5,
-    ratings: [
-      { stars: 5, percentage: 80 },
-      { stars: 4, percentage: 15 },
-      { stars: 3, percentage: 3 },
-      { stars: 2, percentage: 1 },
-      { stars: 1, percentage: 1 },
-    ],
-  },
-  "Último año": {
-    data: [
-      { month: "Abr", value: 80 },
-      { month: "May", value: 95 },
-      { month: "Jun", value: 110 },
-      { month: "Jul", value: 130 },
-      { month: "Ago", value: 145 },
-      { month: "Sep", value: 135 },
-      { month: "Oct", value: 90 },
-      { month: "Nov", value: 105 },
-      { month: "Dic", value: 125 },
-      { month: "Ene", value: 115 },
-      { month: "Feb", value: 140 },
-      { month: "Mar", value: 100 },
-    ],
-    totalReviews: 1275,
-    averageRating: 4.63,
-    ratings: [
-      { stars: 5, percentage: 90 },
-      { stars: 4, percentage: 7 },
-      { stars: 3, percentage: 2 },
-      { stars: 2, percentage: 1 },
-      { stars: 1, percentage: 0 },
-    ],
-  },
-};
-
-export default function MonthlyChart({ onDataChange }) {
+export default function MonthlyChart({ initialData, onPeriodChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Últimos 3 meses");
   const dropdownRef = useRef(null);
@@ -106,14 +43,14 @@ export default function MonthlyChart({ onDataChange }) {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
-    onDataChange(chartData[option]);
+    onPeriodChange(option);
   };
 
   const currentChartData = {
-    labels: chartData[selectedOption].data.map((item) => item.month),
+    labels: initialData.data.map((item) => item.month),
     datasets: [
       {
-        data: chartData[selectedOption].data.map((item) => item.value),
+        data: initialData.data.map((item) => item.value),
         borderColor: "#FFD700",
         backgroundColor: "white",
         pointBackgroundColor: "white",
@@ -146,7 +83,6 @@ export default function MonthlyChart({ onDataChange }) {
       },
       y: {
         min: 0,
-        max: 150,
         ticks: {
           stepSize: 25,
           font: {
@@ -185,25 +121,11 @@ export default function MonthlyChart({ onDataChange }) {
         displayColors: false,
       },
     },
-    elements: {
-      line: {
-        tension: 0.4,
-      },
-      point: {
-        radius: 6,
-        borderWidth: 2,
-        backgroundColor: "white",
-        borderColor: "#FFD700",
-        hoverBackgroundColor: "#FFFFFF",
-        hoverBorderColor: "#FFD700",
-      },
-    },
   };
 
   return (
     <div className="w-full">
       <div className="rounded-[20px] border-[4px] border-[#71C9ED] bg-white px-5 py-8">
-        {/* Dropdown Button */}
         <div className="px-2">
           <div className="relative mb-8" ref={dropdownRef}>
             <button
@@ -219,26 +141,26 @@ export default function MonthlyChart({ onDataChange }) {
               />
             </button>
 
-            {/* Dropdown Menu */}
             {isOpen && (
               <div className="absolute top-full left-0 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg z-10">
                 <div className="py-1">
-                  {Object.keys(chartData).map((option) => (
-                    <button
-                      key={option}
-                      className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
-                      onClick={() => handleOptionSelect(option)}
-                    >
-                      {option}
-                    </button>
-                  ))}
+                  {["Últimos 3 meses", "Últimos 6 meses", "Último año"].map(
+                    (option) => (
+                      <button
+                        key={option}
+                        className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
+                        onClick={() => handleOptionSelect(option)}
+                      >
+                        {option}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Graph */}
         <div className="h-[260px] -mx-2">
           <Line data={currentChartData} options={options} />
         </div>
