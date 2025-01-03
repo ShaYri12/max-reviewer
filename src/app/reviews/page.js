@@ -48,11 +48,6 @@ const generateMockData = () => {
 };
 
 // Helper function to process reviews data
-// ... previous imports and mock data generation remain the same ...
-
-// ... previous imports and mock data generation remain the same ...
-// ... previous imports remain the same ...
-
 const processReviewsData = (data, monthsToFilter) => {
   const currentDate = new Date();
   const filterDate = new Date(
@@ -102,47 +97,44 @@ const processReviewsData = (data, monthsToFilter) => {
     }))
     .sort((a, b) => b.stars - a.stars);
 
-  // Group reviews by month for chart data
+  // Group reviews by month and year for chart data
   const monthlyReviews = filteredReviews.reduce((acc, [_, review]) => {
     const date = new Date(review.day);
-    const monthName = date.toLocaleString("default", { month: "short" });
+    const monthYear = date.toLocaleString("default", {
+      month: "short",
+      year: "numeric",
+    });
 
-    if (!acc[monthName]) {
-      acc[monthName] = {
+    if (!acc[monthYear]) {
+      acc[monthYear] = {
         count: 0,
         monthIndex: date.getMonth(),
+        year: date.getFullYear(),
       };
     }
 
-    acc[monthName].count++;
+    acc[monthYear].count++;
     return acc;
   }, {});
 
   // Generate chart data ensuring all months are included
-  const monthOrder = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const currentMonthIndex = currentDate.getMonth();
-
   const chartData = [];
   for (let i = monthsToFilter - 1; i >= 0; i--) {
-    const monthIndex = (currentMonthIndex - i + 12) % 12;
-    const monthName = monthOrder[monthIndex];
+    const date = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - i,
+      1
+    );
+    const monthYear = date.toLocaleString("default", {
+      month: "short",
+      year: "numeric",
+    });
+    const monthName = date.toLocaleString("default", { month: "short" });
 
     chartData.push({
       month: monthName,
-      value: monthlyReviews[monthName]?.count || 0,
+      value: monthlyReviews[monthYear]?.count || 0,
+      year: date.getFullYear(),
     });
   }
 
@@ -186,7 +178,6 @@ const ReviewPage = () => {
         if (!data.data?.starCounts) {
           throw new Error("Invalid data structure received from API");
         }
-
         setRawData(data.data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
