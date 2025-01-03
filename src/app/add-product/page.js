@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/shared/navbar";
 import QRScanner from "../components/add-product/qr-scanner";
 import PlatformSelector from "../components/shared/platform-selector";
 import withAuth from "../utils/with-authenticated";
+import axios from "axios";
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 const platforms = [
   { value: "google", label: "Google Reviews" },
@@ -14,6 +17,10 @@ const platforms = [
 ];
 
 const AddProductPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
   const [formData, setFormData] = useState({
     productId: "",
     businessName: "",
@@ -21,7 +28,30 @@ const AddProductPage = () => {
     profileLink: "",
   });
 
-  const router = useRouter();
+  useEffect(() => {
+    if (!!id) {
+      if (id === "1") {
+        const mockData = {
+          productId: "1",
+          businessName: "Café Córdoba",
+          platform: "google",
+          profileLink: "https://www.cafecordoba.com",
+        };
+        setFormData(mockData);
+      } else {
+        const fetchProductData = async () => {
+          try {
+            const response = await axios.get(`/api/cards/product/${id}`);
+            setFormData(response.data);
+          } catch (error) {
+            console.error("Error fetching product data:", error);
+          }
+        };
+
+        fetchProductData();
+      }
+    }
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,10 +62,40 @@ const AddProductPage = () => {
     setFormData((prev) => ({ ...prev, productId }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    router.push("reviews");
+
+    try {
+      let response;
+      if (id) {
+        response = await axios.put(`/api/cards/product/${id}`, formData);
+      } else {
+        response = await axios.post("/api/cards/product", formData);
+      }
+
+      if (response.status === 200) {
+        toast.success(
+          id
+            ? "¡Producto actualizado con éxito!"
+            : "¡Producto agregado con éxito!"
+        );
+        router.push("/reviews");
+      } else {
+        toast.error(
+          "No se pudo actualizar el producto. Por favor, inténtalo de nuevo."
+        );
+        toast.success(
+          id
+            ? "No se pudo actualizar el producto. Por favor, inténtalo de nuevo."
+            : "No se pudo agregar el producto. Por favor, inténtalo de nuevo."
+        );
+      }
+    } catch (error) {
+      console.error("Error al guardar el producto:", error);
+      toast.error(
+        "No se pudo guardar el producto. Por favor, inténtalo de nuevo."
+      );
+    }
   };
 
   return (
@@ -46,7 +106,7 @@ const AddProductPage = () => {
           <main className="flex-1 overflow-auto p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg text-[#6C7278] font-semibold">
-                Configura tu producto
+                {id ? "Editar Producto" : "Configura tu Producto"}
               </h2>
               <button onClick={() => router.back()} className="text-[#6DC1E6]">
                 <img src="/close.svg" alt="Close" width={20} height={20} />
@@ -94,13 +154,12 @@ const AddProductPage = () => {
             </form>
           </main>
           <footer className="p-6">
-            {/* <Button onClick={handleSubmit}>Guardar</Button> */}
             <button
-              onClick={() => router.push("/reviews")}
+              onClick={handleSubmit}
               type="submit"
               className="w-full py-3 px-4 bg-[#17375F] hover:bg-[#17375F]/90 text-white rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17375F] transition-colors"
             >
-              Guardar
+              {id ? "Actualizar Producto" : "Guardar"}
             </button>
           </footer>
         </div>

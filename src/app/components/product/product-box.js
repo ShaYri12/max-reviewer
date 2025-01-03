@@ -1,4 +1,9 @@
-const ProductBox = ({ product }) => {
+const ProductBox = ({
+  product,
+  handleReviews,
+  handleDelete,
+  handleEditProduct,
+}) => {
   return (
     <div className="flex mt-3 w-full gap-3 border-[#71C9ED] border-[3px] rounded-lg p-3">
       <img
@@ -15,19 +20,25 @@ const ProductBox = ({ product }) => {
           </p>
         </div>
         <div className="flex flex-col gap-2">
-          <button className="text-[#6DC1E6]">
+          <button
+            onClick={() => handleEditProduct(product.id)}
+            className="text-[#6DC1E6]"
+          >
             <img
               src="/clipboard.svg"
               className="w-[20px] h-[20px] my-1 object-contain overflow-hidden"
             />
           </button>
-          <button className="text-[#6DC1E6]">
+          <button
+            onClick={() => handleDelete(product.id)}
+            className="text-[#6DC1E6]"
+          >
             <img
               src="/chart.svg"
               className="w-[20px] h-[20px] my-1 object-contain overflow-hidden"
             />
           </button>
-          <button className="text-[#6DC1E6]">
+          <button onClick={handleReviews} className="text-[#6DC1E6]">
             <img
               src="/bin.svg"
               className="w-[20px] h-[20px] my-1 object-contain overflow-hidden"

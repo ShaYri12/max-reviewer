@@ -30,6 +30,12 @@ const LoginForm = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (!formData.email || !formData.password) {
+      toast.error("Por favor, completa todos los campos.");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       username: formData.email,
       password: formData.password,
@@ -44,10 +50,10 @@ const LoginForm = () => {
 
         // Store the token in localStorage with remember me logic
         if (rememberMe) {
-          localStorage.setItem("authToken", receivedToken); // Save token with remember me
+          localStorage.setItem("token", receivedToken); // Save token with remember me
           localStorage.setItem("rememberMe", "true"); // Indicate "Remember me" is enabled
         } else {
-          localStorage.setItem("authToken", receivedToken); // Save token for session
+          localStorage.setItem("token", receivedToken); // Save token for session
           localStorage.removeItem("rememberMe"); // Remove "Remember me" flag if not checked
         }
 

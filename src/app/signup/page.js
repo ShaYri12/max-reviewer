@@ -67,6 +67,17 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      !formData.companyName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      toast.error("Todos los campos son obligatorios.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Las contraseñas no coinciden.");
       return;

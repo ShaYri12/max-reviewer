@@ -6,6 +6,7 @@ import axios from "axios";
 import Footer from "../components/shared/footer";
 import ProductBox from "../components/product/product-box";
 import withAuth from "../utils/with-authenticated";
+import toast from "react-hot-toast";
 
 const Interface = () => {
   const router = useRouter();
@@ -45,6 +46,32 @@ const Interface = () => {
     fetchProducts();
   }, [customerId]);
 
+  const handleReviews = () => {
+    router.push("/reviews");
+  };
+
+  const handleEditProduct = (productId) => {
+    router.push(`/add-product?id=${productId}`);
+  };
+
+  const handleDelete = async (productId) => {
+    try {
+      const response = await axios.delete(`/api/cards/product/${productId}`);
+      if (response.status === 200) {
+        // toast.success("Producto eliminado con éxito.");
+        router.reload();
+      } else {
+        toast.error(
+          "No se pudo eliminar el producto. Por favor, inténtalo de nuevo."
+        );
+      }
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+
+      toast.error("Ocurrió un error al eliminar el producto.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#17375F]">
       <Navbar />
@@ -79,7 +106,13 @@ const Interface = () => {
               <p className="text-center text-gray-600">No products found.</p>
             ) : (
               products.map((product) => (
-                <ProductBox key={product.id} product={product} />
+                <ProductBox
+                  key={product.id}
+                  product={product}
+                  handleReviews={handleReviews}
+                  handleDelete={handleDelete}
+                  handleEditProduct={handleEditProduct}
+                />
               ))
             )}
           </div>

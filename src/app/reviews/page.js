@@ -35,8 +35,8 @@ const ReviewPage = () => {
       <Navbar />
 
       <div className="fixed inset-x-4 top-[80px] bottom-0">
-        <div className="h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
-          <div className="overflow-auto p-6 space-y-8">
+        <div className="h-full overflow-auto  bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+          <div className=" p-6 space-y-8">
             <div className="flex items-center justify-between">
               <h1 className="text-lg text-[#6C7278] font-semibold">
                 Reviews totales: {reviewData.totalReviews}
@@ -78,7 +78,7 @@ const ReviewPage = () => {
           </div>
 
           {/* Footer */}
-          <footer className="mt-auto p-4 text-center">
+          <footer className="mt-auto p-4 bg-none text-center">
             <Footer />
           </footer>
         </div>
