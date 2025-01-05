@@ -64,6 +64,12 @@ const SignupForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const validateEmail = (email) => {
+    // Basic email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,6 +81,11 @@ const SignupForm = () => {
       !formData.confirmPassword
     ) {
       toast.error("Todos los campos son obligatorios.");
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      toast.error("Por favor, ingresa una dirección de correo válida.");
       return;
     }
 
@@ -133,7 +144,7 @@ const SignupForm = () => {
           </p>
         </div>
         <div className="bg-white rounded-t-3xl px-5 py-6">
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
             <InputField
               label="Nombre de la empresa*"
               type="text"

@@ -201,27 +201,57 @@ const ReviewPage = () => {
     }
   }, [selectedPeriod, rawData]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#17375F] flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!reviewData) {
-    return (
-      <div className="min-h-screen bg-[#17375F] flex items-center justify-center">
-        <div className="text-white">No data available</div>
-      </div>
-    );
-  }
-
   const periodOptions = {
     "Últimos 3 meses": 3,
     "Últimos 6 meses": 6,
     "Último año": 12,
   };
+
+  if (loading || !reviewData) {
+    return (
+      <div className="min-h-screen bg-[#17375F]">
+        <Navbar />
+        <div className="fixed inset-x-4 top-[80px] bottom-0">
+          <div className="h-full overflow-auto bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+            <div className="p-6 space-y-8">
+              <div className="flex items-center justify-between">
+                <div className="h-6 w-48 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-5 w-5 bg-gray-200 animate-pulse rounded-full"></div>
+              </div>
+
+              <div className="flex gap-5">
+                <div className="space-y-2 w-[60%]">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="h-4 w-4 bg-gray-200 animate-pulse rounded"></div>
+                      <div className="h-1 flex-1 bg-gray-200 animate-pulse rounded"></div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col items-center justify-center text-center w-[35%] mt-[-6px]">
+                  <div className="h-6 w-24 mb-2 bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-16 w-16 mb-2 bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <div className="h-8 w-32 bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-8 w-32 bg-gray-200 animate-pulse rounded"></div>
+                </div>
+                <div className="h-[200px] w-full bg-gray-200 animate-pulse rounded"></div>
+              </div>
+            </div>
+
+            <footer className="mt-auto p-4 bg-none text-center">
+              <Footer />
+            </footer>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#17375F]">
@@ -229,11 +259,6 @@ const ReviewPage = () => {
 
       <div className="fixed inset-x-4 top-[80px] bottom-0">
         <div className="h-full overflow-auto bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
-          {error && (
-            <div className="px-6 py-2 bg-yellow-50 text-yellow-700 text-sm">
-              Using sample data due to API error
-            </div>
-          )}
           <div className="p-6 space-y-8">
             <div className="flex items-center justify-between">
               <h1 className="text-lg text-[#6C7278] font-semibold">
