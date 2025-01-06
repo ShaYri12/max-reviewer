@@ -14,7 +14,7 @@ const LoginForm = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false); // Track "Remember me" checkbox
+  const [rememberMe, setRememberMe] = useState(false);  
   const [token, setToken] = useState(null);
 
   const handleChange = (e) => {
@@ -37,7 +37,6 @@ const LoginForm = () => {
     }
 
     const validateEmail = (email) => {
-      // Basic email validation regex
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     };
@@ -60,13 +59,12 @@ const LoginForm = () => {
         const receivedToken = response.data?.data?.token;
         setToken(receivedToken);
 
-        // Store the token in localStorage with remember me logic
         if (rememberMe) {
-          localStorage.setItem("token", receivedToken); // Save token with remember me
-          localStorage.setItem("rememberMe", "true"); // Indicate "Remember me" is enabled
+          localStorage.setItem("token", receivedToken);  
+          localStorage.setItem("rememberMe", "true");  
         } else {
-          localStorage.setItem("token", receivedToken); // Save token for session
-          localStorage.removeItem("rememberMe"); // Remove "Remember me" flag if not checked
+          localStorage.setItem("token", receivedToken);  
+          localStorage.removeItem("rememberMe"); 
         }
 
         toast.success("Inicio de sesión exitoso");
@@ -139,7 +137,7 @@ const LoginForm = () => {
                   <input
                     type="checkbox"
                     checked={rememberMe}
-                    onChange={handleRememberMeChange} // Handle "Remember me" toggle
+                    onChange={handleRememberMeChange} 
                     className="rounded border-gray-300"
                   />
                   Recuérdame

@@ -1,4 +1,3 @@
-// components/PlatformSelector.js
 const PlatformSelector = ({ value, onChange, platforms }) => (
   <div className="space-y-2">
     <p className="text-sm text-gray-600">

@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation"; // Import usePathname hook
+import { usePathname, useRouter } from "next/navigation"; 
 
 const Sidebar = ({ isOpen, onClose }) => {
   const router = useRouter();
-  const pathname = usePathname(); // Get the current pathname
+  const pathname = usePathname(); 
   const handleLogout = () => {
     router.push("signup");
     localStorage.removeItem("token");

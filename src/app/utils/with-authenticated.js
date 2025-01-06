@@ -10,14 +10,14 @@ const withAuth = (WrappedComponent) => {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        router.replace("/login"); // Use `replace` to avoid adding to browser history
+        router.replace("/login");  
       } else {
-        setIsLoading(false); // Only render the component if authenticated
+        setIsLoading(false); 
       }
     }, []);
 
     if (isLoading) {
-      return null; // Render nothing until auth check is complete
+      return null; 
     }
 
     return <WrappedComponent {...props} />;

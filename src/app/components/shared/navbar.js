@@ -29,7 +29,6 @@ const Navbar = () => {
         </div>
         <ProfileDropdown />
       </header>
-      {/* Backdrop */}
       {isSidebarOpen && (
         <div
           id="backdrop"
@@ -37,7 +36,6 @@ const Navbar = () => {
           onClick={handleBackdropClick}
         />
       )}
-      {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
     </div>
   );

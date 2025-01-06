@@ -58,7 +58,6 @@ const Interface = () => {
     try {
       const response = await axios.delete(`/api/cards/product/${productId}`);
       if (response.status === 200) {
-        // toast.success("Producto eliminado con éxito.");
         router.reload();
       } else {
         toast.error(

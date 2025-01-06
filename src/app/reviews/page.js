@@ -8,22 +8,18 @@ import Rating from "../components/reviews/rating";
 import withAuth from "../utils/with-authenticated";
 import MonthlyChart from "../components/reviews/monthly-chart";
 
-// Generate mock data for 12 months
 const generateMockData = () => {
   const mockData = { totalReviews: 0, overallRating: 0, starCounts: {} };
   const today = new Date();
 
-  // Generate data for last 12 months
   for (let i = 0; i < 365; i++) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
 
-    // Generate 2-5 reviews per day with random ratings
     const dailyReviewCount = Math.floor(Math.random() * 4) + 2;
 
     for (let j = 0; j < dailyReviewCount; j++) {
-      // Weight ratings towards higher scores (more realistic)
-      const weights = [0.05, 0.1, 0.15, 0.3, 0.4]; // 5% 1-star, 40% 5-star
+      const weights = [0.05, 0.1, 0.15, 0.3, 0.4]; 
       const random = Math.random();
       let rating = 1;
       let sum = 0;
@@ -47,7 +43,6 @@ const generateMockData = () => {
   return mockData;
 };
 
-// Helper function to process reviews data
 const processReviewsData = (data, monthsToFilter) => {
   const currentDate = new Date();
   const filterDate = new Date(
@@ -56,7 +51,6 @@ const processReviewsData = (data, monthsToFilter) => {
     1
   );
 
-  // Filter reviews based on date range
   const filteredReviews = Object.entries(data.starCounts).filter(
     ([_, review]) => {
       const reviewDate = new Date(review.day);
@@ -64,10 +58,8 @@ const processReviewsData = (data, monthsToFilter) => {
     }
   );
 
-  // Calculate total reviews directly from filtered reviews
   const totalReviews = filteredReviews.length;
 
-  // Calculate rating statistics from filtered reviews
   const ratingStats = filteredReviews.reduce(
     (acc, [_, review]) => {
       const rating = Number(review.Rating);
@@ -78,10 +70,8 @@ const processReviewsData = (data, monthsToFilter) => {
     { sum: 0, counts: {} }
   );
 
-  // Calculate average rating
   const averageRating = ratingStats.sum / totalReviews;
 
-  // Convert rating counts to percentages
   const ratings = Object.entries(ratingStats.counts)
     .map(([stars, count]) => ({
       stars: Number(stars),
@@ -89,7 +79,6 @@ const processReviewsData = (data, monthsToFilter) => {
     }))
     .sort((a, b) => b.stars - a.stars);
 
-  // Fill in any missing ratings with 0%
   const allRatings = [1, 2, 3, 4, 5]
     .map((stars) => ({
       stars,
@@ -97,7 +86,6 @@ const processReviewsData = (data, monthsToFilter) => {
     }))
     .sort((a, b) => b.stars - a.stars);
 
-  // Group reviews by month and year for chart data
   const monthlyReviews = filteredReviews.reduce((acc, [_, review]) => {
     const date = new Date(review.day);
     const monthYear = date.toLocaleString("default", {
@@ -117,7 +105,6 @@ const processReviewsData = (data, monthsToFilter) => {
     return acc;
   }, {});
 
-  // Generate chart data ensuring all months are included
   const chartData = [];
   for (let i = monthsToFilter - 1; i >= 0; i--) {
     const date = new Date(
@@ -138,7 +125,6 @@ const processReviewsData = (data, monthsToFilter) => {
     });
   }
 
-  // Verify total reviews matches sum of monthly reviews
   const chartTotal = chartData.reduce((sum, month) => sum + month.value, 0);
   if (chartTotal !== totalReviews) {
     console.error("Review count mismatch:", { chartTotal, totalReviews });
@@ -157,7 +143,7 @@ const ReviewPage = () => {
   const [loading, setLoading] = useState(true);
   const [reviewData, setReviewData] = useState(null);
   const [rawData, setRawData] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState(3); // Default to 3 months
+  const [selectedPeriod, setSelectedPeriod] = useState(3); 
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -166,7 +152,7 @@ const ReviewPage = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/api/reviews"); // Replace with your API endpoint
+        const response = await fetch("/api/reviews"); 
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -174,7 +160,6 @@ const ReviewPage = () => {
 
         const data = await response.json();
 
-        // Validate data structure
         if (!data.data?.starCounts) {
           throw new Error("Invalid data structure received from API");
         }
@@ -183,7 +168,6 @@ const ReviewPage = () => {
         console.error("Error fetching reviews:", error);
         setError(error.message);
 
-        // Use mock data as fallback
         const mockData = generateMockData();
         setRawData(mockData);
       } finally {
