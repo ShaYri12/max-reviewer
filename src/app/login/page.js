@@ -36,6 +36,18 @@ const LoginForm = () => {
       return;
     }
 
+    const validateEmail = (email) => {
+      // Basic email validation regex
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
+
+    if (!validateEmail(formData.email)) {
+      toast.error("Por favor, ingresa una dirección de correo válida.");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       username: formData.email,
       password: formData.password,
@@ -94,7 +106,7 @@ const LoginForm = () => {
         </div>
         <div className="bg-white flex-1 flex flex-col justify-between rounded-t-3xl h-full px-5 py-6">
           <div>
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-4" onSubmit={handleSubmit} noValidate>
               <div>
                 <input
                   type="email"

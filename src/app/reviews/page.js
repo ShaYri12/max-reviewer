@@ -207,52 +207,6 @@ const ReviewPage = () => {
     "Último año": 12,
   };
 
-  if (loading || !reviewData) {
-    return (
-      <div className="min-h-screen bg-[#17375F]">
-        <Navbar />
-        <div className="fixed inset-x-4 top-[80px] bottom-0">
-          <div className="h-full overflow-auto bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
-            <div className="p-6 space-y-8">
-              <div className="flex items-center justify-between">
-                <div className="h-6 w-48 bg-gray-200 animate-pulse rounded"></div>
-                <div className="h-5 w-5 bg-gray-200 animate-pulse rounded-full"></div>
-              </div>
-
-              <div className="flex gap-5">
-                <div className="space-y-2 w-[60%]">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <div className="h-4 w-4 bg-gray-200 animate-pulse rounded"></div>
-                      <div className="h-1 flex-1 bg-gray-200 animate-pulse rounded"></div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex flex-col items-center justify-center text-center w-[35%] mt-[-6px]">
-                  <div className="h-6 w-24 mb-2 bg-gray-200 animate-pulse rounded"></div>
-                  <div className="h-16 w-16 mb-2 bg-gray-200 animate-pulse rounded"></div>
-                  <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <div className="h-8 w-32 bg-gray-200 animate-pulse rounded"></div>
-                  <div className="h-8 w-32 bg-gray-200 animate-pulse rounded"></div>
-                </div>
-                <div className="h-[200px] w-full bg-gray-200 animate-pulse rounded"></div>
-              </div>
-            </div>
-
-            <footer className="mt-auto p-4 bg-none text-center">
-              <Footer />
-            </footer>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[#17375F]">
       <Navbar />
@@ -261,8 +215,13 @@ const ReviewPage = () => {
         <div className="h-full overflow-auto bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
           <div className="p-6 space-y-8">
             <div className="flex items-center justify-between">
-              <h1 className="text-lg text-[#6C7278] font-semibold">
-                Reviews totales: {reviewData.totalReviews}
+              <h1 className="text-lg text-[#6C7278] font-semibold flex items-center gap-[6px]">
+                Reviews totales:{" "}
+                {loading || !reviewData ? (
+                  <div className="h-5 w-8 bg-gray-200 animate-pulse rounded-sm"></div>
+                ) : (
+                  <span>{reviewData.totalReviews}</span>
+                )}
               </h1>
               <button onClick={() => router.back()} className="text-[#6DC1E6]">
                 <img src="/close.svg" alt="Close" width={20} height={20} />
@@ -271,39 +230,70 @@ const ReviewPage = () => {
 
             <div className="flex gap-5">
               <div className="space-y-2 w-[60%]">
-                {reviewData.ratings.map(({ stars, percentage }) => (
-                  <div key={stars} className="flex items-center gap-2">
-                    <span className="w-2 text-xs font-[400] text-[#6C7278]">
-                      {stars}
-                    </span>
-                    <div className="flex-1 h-[4px] bg-[#D9D9D9] overflow-hidden">
-                      <div
-                        className="h-full bg-[#FFDD4C] rounded-full"
-                        style={{ width: `${percentage}%` }}
-                      />
+                {(loading || !reviewData
+                  ? Array.from({ length: 5 })
+                  : reviewData.ratings
+                ).map((item, index) =>
+                  loading || !reviewData ? (
+                    <div key={index} className="flex items-center gap-2">
+                      <span className="w-2 text-xs font-[400] text-[#6C7278]">
+                        {5 - index}
+                      </span>
+                      <div className="h-1 flex-1 bg-gray-200 animate-pulse rounded"></div>
                     </div>
-                  </div>
-                ))}
+                  ) : (
+                    <div key={item.stars} className="flex items-center gap-2">
+                      <span className="w-2 text-xs font-[400] text-[#6C7278]">
+                        {item.stars}
+                      </span>
+                      <div className="flex-1 h-[4px] bg-[#D9D9D9] overflow-hidden">
+                        <div
+                          className="h-full bg-[#FFDD4C] rounded-full"
+                          style={{ width: `${item.percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
+
               <div className="flex flex-col items-center justify-center text-center w-[35%] mt-[-6px]">
                 <div className="text-[21px] text-[#6C7278] font-light">
                   Calificación
                 </div>
-                <div className="text-6xl font-[500] text-[#6C7278]">
-                  {reviewData.averageRating.toFixed(2)}
-                </div>
-                <div className="flex justify-center gap-1 mt-[2px]">
-                  <Rating averageReview={reviewData.averageRating} />
-                </div>
+                {loading || !reviewData ? (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="h-16 w-16 mb-2 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="text-6xl font-[500] text-[#6C7278]">
+                      {reviewData.averageRating.toFixed(2)}
+                    </div>
+                    <div className="flex justify-center gap-1 mt-[2px]">
+                      <Rating averageReview={reviewData.averageRating} />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            <MonthlyChart
-              initialData={reviewData}
-              onPeriodChange={(period) =>
-                setSelectedPeriod(periodOptions[period])
-              }
-            />
+            {loading || !reviewData ? (
+              <div className="rounded-[20px] border-[4px] border-[#71C9ED] bg-white px-5 py-8">
+                <div className="px-2">
+                  <div className="h-[48px] w-full bg-gray-200 animate-pulse rounded mx-auto mb-8"></div>
+                </div>
+                <div className="h-[200px] w-full bg-gray-200 animate-pulse rounded"></div>
+              </div>
+            ) : (
+              <MonthlyChart
+                initialData={reviewData}
+                onPeriodChange={(period) =>
+                  setSelectedPeriod(periodOptions[period])
+                }
+              />
+            )}
           </div>
 
           <footer className="mt-auto p-4 bg-none text-center">
