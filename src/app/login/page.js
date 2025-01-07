@@ -14,7 +14,7 @@ const LoginForm = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);  
+  const [rememberMe, setRememberMe] = useState(false);
   const [token, setToken] = useState(null);
 
   const handleChange = (e) => {
@@ -60,11 +60,11 @@ const LoginForm = () => {
         setToken(receivedToken);
 
         if (rememberMe) {
-          localStorage.setItem("token", receivedToken);  
-          localStorage.setItem("rememberMe", "true");  
+          localStorage.setItem("token", receivedToken);
+          localStorage.setItem("rememberMe", "true");
         } else {
-          localStorage.setItem("token", receivedToken);  
-          localStorage.removeItem("rememberMe"); 
+          localStorage.setItem("token", receivedToken);
+          localStorage.removeItem("rememberMe");
         }
 
         toast.success("Inicio de sesión exitoso");
@@ -92,7 +92,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#17375F] flex items-center justify-between p-6">
+    <div className="h-screen bg-[#17375F] flex items-center justify-between px-6 overflow-hidden">
       <div className="w-full min-h-screen flex flex-col justify-between max-w-md mx-auto">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 mb-3 p-6">
@@ -102,8 +102,9 @@ const LoginForm = () => {
             Inicia sesión
           </h1>
         </div>
-        <div className="bg-white flex-1 flex flex-col justify-between rounded-t-3xl h-full px-5 py-6">
-          <div>
+        <div className="bg-white flex-1 flex flex-col justify-between rounded-t-3xl h-full px-5 py-6 overflow-hidden">
+          {/* This div is scrollable */}
+          <div className="h-full overflow-y-auto">
             <form className="space-y-4" onSubmit={handleSubmit} noValidate>
               <div>
                 <input
@@ -137,7 +138,7 @@ const LoginForm = () => {
                   <input
                     type="checkbox"
                     checked={rememberMe}
-                    onChange={handleRememberMeChange} 
+                    onChange={handleRememberMeChange}
                     className="rounded border-gray-300"
                   />
                   Recuérdame

@@ -72,7 +72,7 @@ const Interface = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#17375F]">
+    <div className="h-screen bg-[#17375F] overflow-y-hidden">
       <Navbar />
 
       <div className="bg-white top-[80px] fixed max-w-md mx-auto bottom-0 right-4 left-4 rounded-t-xl">
@@ -115,11 +115,12 @@ const Interface = () => {
                   />
                 ))
               )}
+              <div className="h-[25px]"></div>
             </div>
-            <footer className="relative mt-auto w-full text-center px-4 pt-4">
-              <Footer />
-            </footer>
           </div>
+          <footer className="absolute bottom-3 w-full text-center bg-white px-4 pt-2">
+            <Footer />
+          </footer>
         </main>
       </div>
     </div>

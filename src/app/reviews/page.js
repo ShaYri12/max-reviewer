@@ -19,7 +19,7 @@ const generateMockData = () => {
     const dailyReviewCount = Math.floor(Math.random() * 4) + 2;
 
     for (let j = 0; j < dailyReviewCount; j++) {
-      const weights = [0.05, 0.1, 0.15, 0.3, 0.4]; 
+      const weights = [0.05, 0.1, 0.15, 0.3, 0.4];
       const random = Math.random();
       let rating = 1;
       let sum = 0;
@@ -141,10 +141,12 @@ const processReviewsData = (data, monthsToFilter) => {
 const ReviewPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
   const [reviewData, setReviewData] = useState(null);
   const [rawData, setRawData] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState(3); 
+  const [selectedPeriod, setSelectedPeriod] = useState(3);
   const [error, setError] = useState(null);
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -152,7 +154,7 @@ const ReviewPage = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/api/reviews"); 
+        const response = await fetch("/api/reviews");
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -166,7 +168,7 @@ const ReviewPage = () => {
         setRawData(data.data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
-        setError(error.message);
+        setError(true);
 
         const mockData = generateMockData();
         setRawData(mockData);
@@ -185,6 +187,19 @@ const ReviewPage = () => {
     }
   }, [selectedPeriod, rawData]);
 
+  useEffect(() => {
+    let timer;
+    if (loading || !reviewData) {
+      timer = setTimeout(() => {
+        setShowError(true);
+      }, 3000); // 30 seconds
+    } else {
+      setShowError(false);
+    }
+
+    return () => clearTimeout(timer); // Clean up the timer
+  }, [loading, !reviewData]);
+
   const periodOptions = {
     "Últimos 3 meses": 3,
     "Últimos 6 meses": 6,
@@ -192,12 +207,19 @@ const ReviewPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#17375F]">
+    <div className="h-screen bg-[#17375F] overflow-y-hidden">
       <Navbar />
 
       <div className="fixed inset-x-4 top-[80px] bottom-0">
-        <div className="h-full overflow-auto bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
-          <div className="p-6 space-y-8">
+        <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+          {error && showError && (
+            <div className="absolute inset-0 z-[999] flex items-center justify-center bg-white bg-opacity-40 px-4">
+              <p className="text-red-500 text-lg font-bold text-center">
+                Something went wrong. Please try again later.
+              </p>
+            </div>
+          )}
+          <div className="p-6 space-y-8 h-full overflow-auto">
             <div className="flex items-center justify-between">
               <h1 className="text-lg text-[#6C7278] font-semibold flex items-center gap-[6px]">
                 Reviews totales:{" "}
@@ -278,9 +300,9 @@ const ReviewPage = () => {
                 }
               />
             )}
+            <div className="min-h-[5px] h-[5px] w-full flex"></div>
           </div>
-
-          <footer className="mt-auto p-4 bg-none text-center">
+          <footer className="absolute bottom-0 left-0 p-4 bg-white w-full text-center">
             <Footer />
           </footer>
         </div>
