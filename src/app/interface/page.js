@@ -72,7 +72,7 @@ const Interface = () => {
   };
 
   return (
-    <div className="h-screen bg-[#17375F] overflow-y-hidden">
+    <div className="h-dvh bg-[#17375F] overflow-y-hidden">
       <Navbar />
 
       <div className="bg-white top-[80px] fixed max-w-md mx-auto bottom-0 right-4 left-4 rounded-t-xl">
