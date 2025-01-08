@@ -127,8 +127,8 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="h-dvh bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
-      <div className="w-full max-w-md">
+    <div className="h-dvh bg-[#17375F] flex items-start justify-center px-4 overflow-hidden">
+      <div className="relative w-full flex flex-col items-center justify-center max-w-md mx-auto">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 mb-3 p-6">
             <img src="/logo.png" />
@@ -142,7 +142,7 @@ const SignupForm = () => {
             una cuenta y accede a funciones exclusivas.
           </p>
         </div>
-        <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
+        <div className="bg-white rounded-t-3xl px-5 py-6 h-4/6 md:h-[60%] lg:h-[67%] fixed bottom-0  overflow-y-auto ">
           <form className="space-y-4" onSubmit={handleSubmit} noValidate>
             <InputField
               label="Nombre de la empresa*"
