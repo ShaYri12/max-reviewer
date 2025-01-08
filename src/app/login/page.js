@@ -111,7 +111,7 @@ const LoginForm = () => {
 
   return (
     <div className="h-dvh bg-[#17375F] flex items-center justify-between px-6 overflow-hidden">
-      <div className="w-full min-h-screen flex flex-col justify-between max-w-md mx-auto">
+      <div className="w-full min-h-screen flex flex-col justify-between max-w-md mx-auto h-full">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 md:mb-3 px-6 pt-6 md:pb-6 pb-4">
             <img src="/logo.png" className="md:w-auto w-[300px]" />
