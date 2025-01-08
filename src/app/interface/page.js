@@ -118,7 +118,7 @@ const Interface = () => {
               <div className="h-[25px]"></div>
             </div>
           </div>
-          <footer className="absolute bottom-3 w-full text-center bg-white px-4 pt-2">
+          <footer className="absolute bottom-3 left-0 w-full text-center bg-white px-4 pt-2">
             <Footer />
           </footer>
         </main>
