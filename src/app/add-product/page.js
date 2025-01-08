@@ -99,7 +99,7 @@ const AddProductPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#17375F]">
+    <div className="h-dvh bg-[#17375F] overflow-y-hidden">
       <Navbar />
       <div className="fixed inset-x-4 top-[80px] bottom-0">
         <div className="h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">

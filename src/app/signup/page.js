@@ -127,7 +127,7 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="h-screen bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
+    <div className="h-dvh bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 mb-3 p-6">

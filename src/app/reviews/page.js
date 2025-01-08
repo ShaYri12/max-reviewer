@@ -207,7 +207,7 @@ const ReviewPage = () => {
   };
 
   return (
-    <div className="h-screen bg-[#17375F] overflow-y-hidden">
+    <div className="h-dvh bg-[#17375F] overflow-y-hidden">
       <Navbar />
 
       <div className="fixed inset-x-4 top-[80px] bottom-0">
