@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,21 @@ const LoginForm = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  useEffect(() => {
+    // Check localStorage for remembered credentials
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    const rememberedPassword = localStorage.getItem("rememberedPassword");
+    const isRemembered = localStorage.getItem("rememberMe") === "true";
+
+    if (rememberedEmail && rememberedPassword && isRemembered) {
+      setFormData({
+        email: rememberedEmail,
+        password: rememberedPassword,
+      });
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleRememberMeChange = () => {
     setRememberMe(!rememberMe);
@@ -60,10 +75,12 @@ const LoginForm = () => {
         setToken(receivedToken);
 
         if (rememberMe) {
-          localStorage.setItem("token", receivedToken);
+          localStorage.setItem("rememberedEmail", formData.email);
+          localStorage.setItem("rememberedPassword", formData.password);
           localStorage.setItem("rememberMe", "true");
         } else {
-          localStorage.setItem("token", receivedToken);
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
           localStorage.removeItem("rememberMe");
         }
 
