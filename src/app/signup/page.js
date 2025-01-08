@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Footer from "../components/shared/footer";
+import Link from "next/link";
 
 const InputField = ({ label, type, name, value, onChange, placeholder }) => (
   <div>
@@ -128,10 +129,10 @@ const SignupForm = () => {
 
   return (
     <div className="h-dvh bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
-      <div className="w-full max-w-md">
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center gap-2 mb-3 p-6">
-            <img src="/logo.png" />
+      <div className="w-full max-w-md h-full">
+        <div className="flex flex-col items-center md:mb-8 mb-4">
+          <div className="flex items-center gap-2 md:mb-3 px-6 pt-6 md:pb-6 pb-4">
+            <img src="/logo.png" className="md:w-auto w-[300px]" />
           </div>
           <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
             Crea tu cuenta
@@ -142,71 +143,77 @@ const SignupForm = () => {
             una cuenta y accede a funciones exclusivas.
           </p>
         </div>
-        <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
-          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-            <InputField
-              label="Nombre de la empresa*"
-              type="text"
-              name="companyName"
-              value={formData.companyName}
-              onChange={handleChange}
-              placeholder="Nombre de la empresa*"
-            />
-            <InputField
-              label="Email*"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email*"
-            />
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center px-3 bg-[#6DC1E6] text-white rounded-l-lg">
-                +52
+        <div className="fixed inset-x-4 md:top-[240px] top-[200px] bottom-0">
+          <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+            <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
+              <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+                <InputField
+                  label="Nombre de la empresa*"
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  placeholder="Nombre de la empresa*"
+                />
+                <InputField
+                  label="Email*"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email*"
+                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center px-3 bg-[#6DC1E6] text-white rounded-l-lg">
+                    +52
+                  </div>
+                  <input
+                    type="number"
+                    name="phone"
+                    placeholder="Teléfono a 10 digitos*"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full pl-16 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#6DC1E6]"
+                  />
+                </div>
+                <PasswordField
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Contraseña"
+                />
+                <PasswordField
+                  showPassword={showConfirmPassword}
+                  setShowPassword={setShowConfirmPassword}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirma tu contraseña"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+                >
+                  Registrarte
+                </button>
+              </form>
+              <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
+                <p className="text-gray-600">
+                  ¿Ya tienes una cuenta?{" "}
+                  <Link
+                    href="/login"
+                    className="text-[#6DC1E6] font-bold inline-flex"
+                  >
+                    Inicia sesión
+                  </Link>
+                </p>
               </div>
-              <input
-                type="number"
-                name="phone"
-                placeholder="Teléfono a 10 digitos*"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full pl-16 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#6DC1E6]"
-              />
+              <div className="flex mt-8 justify-center">
+                <Footer />
+              </div>
             </div>
-            <PasswordField
-              showPassword={showPassword}
-              setShowPassword={setShowPassword}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Contraseña"
-            />
-            <PasswordField
-              showPassword={showConfirmPassword}
-              setShowPassword={setShowConfirmPassword}
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirma tu contraseña"
-            />
-            <button
-              type="submit"
-              className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
-            >
-              Registrarte
-            </button>
-          </form>
-          <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
-            <p className="text-gray-600">¿Ya tienes una cuenta? </p>
-            <button
-              onClick={() => router.push("/login")}
-              className="text-[#6DC1E6] font-bold"
-            >
-              Inicia sesión
-            </button>
-          </div>
-          <div className="flex mt-8 justify-center">
-            <Footer />
           </div>
         </div>
       </div>

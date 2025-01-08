@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Footer from "../components/shared/footer";
+import Link from "next/link";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -112,86 +113,92 @@ const LoginForm = () => {
     <div className="h-dvh bg-[#17375F] flex items-center justify-between px-6 overflow-hidden">
       <div className="w-full min-h-screen flex flex-col justify-between max-w-md mx-auto">
         <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center gap-2 mb-3 p-6">
-            <img src="/logo.png" alt="MaxReviewer Logo" />
+          <div className="flex items-center gap-2 md:mb-3 px-6 pt-6 md:pb-6 pb-4">
+            <img src="/logo.png" className="md:w-auto w-[300px]" />
           </div>
           <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
             Inicia sesión
           </h1>
         </div>
-        <div className="bg-white flex-1 flex flex-col justify-between rounded-t-3xl h-full px-5 py-6 overflow-hidden">
-          {/* This div is scrollable */}
-          <div className="h-full overflow-y-auto">
-            <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email*"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border text-black border-gray-200 rounded-lg focus:outline-none focus:border-[#6DC1E6]"
-                />
+        <div className="fixed inset-x-4 md:top-[200px] top-[140px] bottom-0">
+          <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+            <div className="bg-white flex-1 flex flex-col justify-between rounded-t-3xl h-full px-5 py-6 overflow-hidden">
+              {/* This div is scrollable */}
+              <div className="h-full overflow-y-auto">
+                <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+                  <div>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email*"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border text-black border-gray-200 rounded-lg focus:outline-none focus:border-[#6DC1E6]"
+                    />
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      placeholder="Contraseña"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border text-black border-gray-200 rounded-lg focus:outline-none focus:border-[#6DC1E6]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1 items-center justify-between text-sm">
+                    <label className="flex items-center gap-2 text-gray-600">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={handleRememberMeChange}
+                        className="rounded border-gray-300"
+                      />
+                      Recuérdame
+                    </label>
+                    <a href="#" className="text-[#6DC1E6]">
+                      Olvidé mi contraseña
+                    </a>
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+                    disabled={loading}
+                  >
+                    {loading ? "Cargando..." : "Ingresar"}
+                  </button>
+                </form>
+                <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
+                  <p className="text-gray-600">
+                    ¿No tienes una cuenta?{" "}
+                    <Link
+                      href="/signup"
+                      className="text-[#6DC1E6] font-bold inline-flex"
+                    >
+                      Regístrate
+                    </Link>
+                  </p>
+                </div>
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={handleGuestLogin}
+                    className="text-[#6DC1E6] font-medium"
+                  >
+                    Iniciar sesión como invitado
+                  </button>
+                </div>
+                <div className="flex justify-center mt-8">
+                  <Footer />
+                </div>
               </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Contraseña"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border text-black border-gray-200 rounded-lg focus:outline-none focus:border-[#6DC1E6]"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <label className="flex items-center gap-2 text-gray-600">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={handleRememberMeChange}
-                    className="rounded border-gray-300"
-                  />
-                  Recuérdame
-                </label>
-                <a href="#" className="text-[#6DC1E6]">
-                  Olvidé mi contraseña
-                </a>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
-                disabled={loading}
-              >
-                {loading ? "Cargando..." : "Ingresar"}
-              </button>
-            </form>
-            <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
-              <p className="text-gray-600">¿No tienes una cuenta? </p>
-              <button
-                onClick={() => router.push("/signup")}
-                className="text-[#6DC1E6] font-bold"
-              >
-                Regístrate
-              </button>
             </div>
-            <div className="mt-4 text-center">
-              <button
-                onClick={handleGuestLogin}
-                className="text-[#6DC1E6] font-medium"
-              >
-                Iniciar sesión como invitado
-              </button>
-            </div>
-          </div>
-          <div className="flex justify-center mt-8">
-            <Footer />
           </div>
         </div>
       </div>
