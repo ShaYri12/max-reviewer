@@ -112,8 +112,8 @@ const LoginForm = () => {
   return (
     <div className="h-dvh bg-[#17375F] flex items-center justify-between px-6 overflow-hidden">
       <div className="w-full min-h-screen flex flex-col justify-between max-w-md mx-auto h-full">
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center gap-2 md:mb-3 px-6 md:pt-6 pt-10 md:pb-6 pb-4">
+        <div className="flex flex-col items-center md:mb-8 mb-4">
+          <div className="flex items-center gap-2 md:mb-3 px-6 md:pt-6 pt-[45px] md:pb-6 pb-4">
             <img src="/logo.png" className="md:w-auto w-[300px]" />
           </div>
           <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
@@ -122,7 +122,7 @@ const LoginForm = () => {
         </div>
         <div className="fixed inset-x-4 md:top-[200px] top-[140px] bottom-0">
           <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
-            <div className="bg-white flex-1 flex flex-col justify-between rounded-t-3xl h-full px-5 py-6 overflow-hidden">
+            <div className="bg-white flex flex-col justify-between rounded-t-3xl h-full px-5 py-6 overflow-hidden">
               {/* This div is scrollable */}
               <div className="h-full overflow-y-auto">
                 <form className="space-y-4" onSubmit={handleSubmit} noValidate>
