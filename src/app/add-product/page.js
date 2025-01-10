@@ -113,7 +113,7 @@ const AddProductPage = () => {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <QRScanner onScan={handleScan} />
+              <QRScanner id={Boolean(id)} onScan={handleScan} />
               {[
                 {
                   label: "Número de producto",
@@ -142,11 +142,13 @@ const AddProductPage = () => {
                     value={value}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
+                    disabled={name === "productId" && id ? true : false}
                   />
                 </div>
               ))}
 
               <PlatformSelector
+                id={Boolean(id)}
                 value={formData.platform}
                 onChange={handleInputChange}
                 platforms={platforms}

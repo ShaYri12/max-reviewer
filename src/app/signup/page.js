@@ -62,6 +62,12 @@ const SignupForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Ensure phone input only contains up to 10 digits
+    if (name === "phone") {
+      if (value.length > 10) return; // Prevent entering more than 10 digits
+    }
+
     setFormData({ ...formData, [name]: value });
   };
 
@@ -94,10 +100,19 @@ const SignupForm = () => {
       return;
     }
 
+    if (formData.phone.length !== 10) {
+      toast.error("El teléfono debe tener exactamente 10 dígitos.");
+      return;
+    }
+
+    // Append country code
+    const fullPhone = `+52${formData.phone}`;
+
     const payload = {
       firstName: formData.companyName.split(" ")[0],
       lastName: formData.companyName.split(" ")[1] || "",
       email: formData.email,
+      phone: fullPhone, // Updated with country code
       password: formData.password,
       status: 1,
     };
@@ -174,6 +189,7 @@ const SignupForm = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full pl-16 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#6DC1E6]"
+                    max={10}
                   />
                 </div>
                 <PasswordField

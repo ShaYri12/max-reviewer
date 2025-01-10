@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import jsQR from "jsqr";
 
-const QRScanner = ({ onScan }) => {
+const QRScanner = ({ id, onScan }) => {
   const [scanning, setScanning] = useState(false);
   const videoRef = useRef(null);
 
@@ -71,7 +71,11 @@ const QRScanner = ({ onScan }) => {
   };
 
   return (
-    <div className="relative w-full h-64 border-2 border-[#71C9ED] rounded-lg overflow-hidden">
+    <div
+      className={`relative w-full h-64 border-2 border-[#71C9ED] rounded-lg overflow-hidden ${
+        id ? "pointer-events-none opacity-50" : ""
+      }`}
+    >
       {scanning ? (
         <video
           ref={videoRef}

@@ -213,7 +213,7 @@ const ReviewPage = () => {
       <div className="fixed inset-x-4 top-[80px] bottom-0">
         <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
           {error && showError && (
-            <div className="absolute inset-0 z-[999] flex items-center justify-center bg-white bg-opacity-40 px-4">
+            <div className="absolute inset-0 z-[99] flex items-center justify-center bg-white bg-opacity-40 rounded-t-xl px-4">
               <p className="text-red-500 text-lg font-bold text-center">
                 Something went wrong. Please try again later.
               </p>
@@ -229,7 +229,10 @@ const ReviewPage = () => {
                   <span>{reviewData.totalReviews}</span>
                 )}
               </h1>
-              <button onClick={() => router.back()} className="text-[#6DC1E6]">
+              <button
+                onClick={() => router.back()}
+                className="text-[#6DC1E6] relative z-[999]"
+              >
                 <img src="/close.svg" alt="Close" width={20} height={20} />
               </button>
             </div>
