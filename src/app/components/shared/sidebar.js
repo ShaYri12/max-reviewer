@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation"; 
+import { usePathname, useRouter } from "next/navigation";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const handleLogout = () => {
     router.push("signup");
     localStorage.removeItem("token");
@@ -29,9 +29,9 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       <nav className="py-4">
         <Link
-          href="/reviews"
+          href="/dashboard"
           className={`flex items-center gap-3 px-4 py-3 ${
-            pathname === "/reviews"
+            pathname === "/reviews" || pathname === "/dashboard"
               ? "bg-[#6DC1E6] text-white"
               : "text-white hover:bg-[#2C4A72]"
           }`}
