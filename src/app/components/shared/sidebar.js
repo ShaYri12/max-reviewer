@@ -6,9 +6,13 @@ import { usePathname, useRouter } from "next/navigation";
 const Sidebar = ({ isOpen, onClose }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user ? user._id : null;
+
   const handleLogout = () => {
     router.push("signup");
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
 
   return (
@@ -44,7 +48,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         </Link>
 
         <Link
-          href="/interface"
+          href={`/configuration?id=${userId}`}
           className={`flex items-center gap-3 px-4 py-3 ${
             pathname === "/interface"
               ? "bg-[#6DC1E6] text-white"

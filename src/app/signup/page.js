@@ -236,8 +236,10 @@ const SignupForm = ({ userData, onSubmit }) => {
                   </Link>
                 </p>
               </div>
-              <div className="flex mt-8 justify-center">
-                <Footer />
+              <div className="flex items-center justify-center">
+                <div className="mt-8 fixed bottom-4 md:static">
+                  <Footer />
+                </div>
               </div>
             </div>
           </div>

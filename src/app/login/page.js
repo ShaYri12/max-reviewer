@@ -73,8 +73,10 @@ const LoginForm = () => {
 
       if (response.status === 200 || response.status === 201) {
         const receivedToken = response.data?.data?.token;
+        const user = response.data?.data?.user;
         setToken(receivedToken);
         localStorage.setItem("token", receivedToken);
+        localStorage.setItem("user", user);
 
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", formData.email);
@@ -100,14 +102,6 @@ const LoginForm = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGuestLogin = () => {
-    const guestToken = "guest12345";
-    setToken(guestToken);
-    localStorage.setItem("token", guestToken);
-    toast.success("Inicio de sesión como invitado exitoso");
-    router.push("/interface");
   };
 
   return (
@@ -187,16 +181,11 @@ const LoginForm = () => {
                     </Link>
                   </p>
                 </div>
-                <div className="mt-4 text-center">
-                  <button
-                    onClick={handleGuestLogin}
-                    className="text-[#6DC1E6] font-medium"
-                  >
-                    Iniciar sesión como invitado
-                  </button>
-                </div>
-                <div className="flex justify-center mt-8">
-                  <Footer />
+
+                <div className="flex items-center justify-center">
+                  <div className="mt-8 fixed bottom-4 md:static">
+                    <Footer />
+                  </div>
                 </div>
               </div>
             </div>
