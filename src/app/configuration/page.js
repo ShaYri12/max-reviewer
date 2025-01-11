@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -13,7 +13,6 @@ const EditUser = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userId = searchParams.get("id");
-  console.log(userId);
 
   const mockUserData = {
     companyName: "Mock Company",
@@ -29,12 +28,9 @@ const EditUser = () => {
 
     const fetchUserData = async () => {
       try {
-        console.log("Fetching user data for ID:", userId);
         const response = await axios.get(`/user/${userId}`);
-        console.log("User data response:", response);
         setUserData(response.data);
       } catch (err) {
-        console.error("Error fetching user data:", err);
         setUserData(mockUserData);
         setError("Error fetching user data");
         toast.error("Failed to load user data.");
@@ -67,4 +63,10 @@ const EditUser = () => {
   return <SignupForm userData={userData} onSubmit={handleUpdate} />;
 };
 
-export default EditUser;
+export default function EditUserWithSuspense() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditUser />
+    </Suspense>
+  );
+}

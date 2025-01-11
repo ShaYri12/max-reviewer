@@ -225,17 +225,19 @@ const SignupForm = ({ userData, onSubmit }) => {
                   {userData ? "Actualizar" : "Registrarte"}
                 </button>
               </form>
-              <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
-                <p className="text-gray-600">
-                  ¿Ya tienes una cuenta?{" "}
-                  <Link
-                    href="/login"
-                    className="text-[#6DC1E6] font-bold inline-flex"
-                  >
-                    Inicia sesión
-                  </Link>
-                </p>
-              </div>
+              {!userData && (
+                <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
+                  <p className="text-gray-600">
+                    ¿Ya tienes una cuenta?{" "}
+                    <Link
+                      href="/login"
+                      className="text-[#6DC1E6] font-bold inline-flex"
+                    >
+                      Inicia sesión
+                    </Link>
+                  </p>
+                </div>
+              )}
               <div className="flex items-center justify-center">
                 <div className="mt-8 fixed bottom-4 md:static">
                   <Footer />
