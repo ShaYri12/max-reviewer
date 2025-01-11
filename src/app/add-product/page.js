@@ -20,6 +20,7 @@ const AddProductPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -60,6 +61,7 @@ const AddProductPage = () => {
 
   const handleScan = (productId) => {
     setFormData((prev) => ({ ...prev, productId }));
+    setIsProductIdFromQR(true);
   };
 
   const handleSubmit = async (e) => {
@@ -140,9 +142,19 @@ const AddProductPage = () => {
                     type={type}
                     name={name}
                     value={value}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      if (name === "productId") {
+                        const regex = /^[A-Za-z0-9]{0,8}$/;
+                        if (regex.test(e.target.value)) {
+                          handleInputChange(e);
+                        }
+                      } else {
+                        handleInputChange(e);
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
-                    disabled={name === "productId" && id ? true : false}
+                    // disabled={name === "productId" && id ? true : false}
+                    disabled={name === "productId" && isProductIdFromQR}
                   />
                 </div>
               ))}

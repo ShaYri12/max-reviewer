@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -47,7 +47,7 @@ const PasswordField = ({
   </div>
 );
 
-const SignupForm = () => {
+const SignupForm = ({ userData, onSubmit }) => {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -60,12 +60,23 @@ const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        companyName: userData.companyName,
+        email: userData.email,
+        phone: userData.phone,
+        password: "",
+        confirmPassword: "",
+      });
+    }
+  }, [userData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Ensure phone input only contains up to 10 digits
     if (name === "phone") {
-      if (value.length > 10) return; // Prevent entering more than 10 digits
+      if (value.length > 10) return;
     }
 
     setFormData({ ...formData, [name]: value });
@@ -105,31 +116,22 @@ const SignupForm = () => {
       return;
     }
 
-    // Append country code
     const fullPhone = `+52${formData.phone}`;
 
     const payload = {
       firstName: formData.companyName.split(" ")[0],
       lastName: formData.companyName.split(" ")[1] || "",
       email: formData.email,
-      phone: fullPhone, // Updated with country code
+      phone: fullPhone,
       password: formData.password,
       status: 1,
     };
 
     try {
-      const simulatedResponse = {
-        data: {
-          status: "OK",
-          data: { id: "12345", ...payload },
-        },
-      };
+      const response = await axios.post("/auth/signup", payload);
 
-      if (
-        simulatedResponse.data?.status === "OK" &&
-        simulatedResponse.data?.data
-      ) {
-        toast.success("¡Cuenta creada exitosamente!");
+      if (response.data?.status === "OK" && response.data?.data) {
+        toast.success("Cuenta creada exitosamente!");
         router.push("/login");
       } else {
         toast.error("Error al crear la cuenta. Por favor, inténtalo de nuevo.");
@@ -161,7 +163,11 @@ const SignupForm = () => {
         <div className="fixed inset-x-4 md:top-[240px] top-[200px] bottom-0">
           <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
             <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
-              <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+              <form
+                className="space-y-4"
+                onSubmit={userData ? onSubmit : handleSubmit}
+                noValidate
+              >
                 <InputField
                   label="Nombre de la empresa*"
                   type="text"
@@ -192,27 +198,31 @@ const SignupForm = () => {
                     max={10}
                   />
                 </div>
-                <PasswordField
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Contraseña"
-                />
-                <PasswordField
-                  showPassword={showConfirmPassword}
-                  setShowPassword={setShowConfirmPassword}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirma tu contraseña"
-                />
+                {!userData && (
+                  <>
+                    <PasswordField
+                      showPassword={showPassword}
+                      setShowPassword={setShowPassword}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Contraseña"
+                    />
+                    <PasswordField
+                      showPassword={showConfirmPassword}
+                      setShowPassword={setShowConfirmPassword}
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      placeholder="Confirma tu contraseña"
+                    />
+                  </>
+                )}
                 <button
                   type="submit"
                   className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
                 >
-                  Registrarte
+                  {userData ? "Actualizar" : "Registrarte"}
                 </button>
               </form>
               <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">

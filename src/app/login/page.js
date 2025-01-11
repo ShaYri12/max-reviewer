@@ -74,6 +74,7 @@ const LoginForm = () => {
       if (response.status === 200 || response.status === 201) {
         const receivedToken = response.data?.data?.token;
         setToken(receivedToken);
+        localStorage.setItem("token", receivedToken);
 
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", formData.email);
