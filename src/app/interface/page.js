@@ -23,11 +23,12 @@ const Interface = () => {
         try {
           const mockData = [
             {
-              id: "1",
-              name: "Café Córdoba",
-              scans: 2359,
-              code: "64IV9",
-              platform: "Google Review",
+              cardId: "1",
+              cardCode: "64IV9",
+              cardType: "Google Review",
+              establishmentId: 1,
+              establishmentName: "Café Córdoba",
+              timesVisited: 2359,
             },
           ];
 
@@ -107,7 +108,7 @@ const Interface = () => {
               ) : (
                 products.map((product) => (
                   <ProductBox
-                    key={product.id}
+                    key={product.cardId}
                     product={product}
                     handleReviews={handleReviews}
                     handleDelete={handleDelete}

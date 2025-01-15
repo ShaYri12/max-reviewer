@@ -38,6 +38,7 @@ const QRScanner = ({ id, onScan }) => {
             canvas.width,
             canvas.height
           );
+          
           const qrCode = jsQR(
             imageData.data,
             imageData.width,

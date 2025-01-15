@@ -128,7 +128,7 @@ const SignupForm = ({ userData, onSubmit }) => {
     };
 
     try {
-      const response = await axios.post("/auth/signup", payload);
+      const response = await axios.post("/api/customers", payload);
 
       if (response.data?.status === "OK" && response.data?.data) {
         toast.success("Cuenta creada exitosamente!");

@@ -28,17 +28,19 @@ const ProductBox = ({
         <div className="flex-1 flex justify-between items-start">
           <div>
             <h3 className="font-semibold text-[#6C7278] mb-1">
-              {product.name}
+              {product.establishmentName}
             </h3>
-            <p className="text-sm text-gray-600">Escaneos: {product.scans}</p>
-            <p className="text-sm text-gray-600">Código: {product.code}</p>
             <p className="text-sm text-gray-600">
-              Plataforma: {product.platform}
+              Escaneos: {product.timesVisited}
+            </p>
+            <p className="text-sm text-gray-600">Código: {product.cardCode}</p>
+            <p className="text-sm text-gray-600">
+              Plataforma: {product.cardType}
             </p>
           </div>
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => handleEditProduct(product.id)}
+              onClick={() => handleEditProduct(product.cardId)}
               className="text-[#6DC1E6]"
             >
               <img

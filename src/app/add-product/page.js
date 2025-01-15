@@ -42,7 +42,8 @@ const AddProductPage = () => {
       } else {
         const fetchProductData = async () => {
           try {
-            const response = await axios.get(`/api/cards/product/${id}`);
+            // const response = await axios.get(`/api/cards/product/${id}`);
+            const response = await axios.get(`/api/establishment`);
             setFormData(response.data);
           } catch (error) {
             console.error("Error fetching product data:", error);
@@ -72,7 +73,7 @@ const AddProductPage = () => {
       if (id) {
         response = await axios.put(`/api/cards/product/${id}`, formData);
       } else {
-        response = await axios.post("/api/cards/product", formData);
+        response = await axios.post("/api/establishment", formData);
       }
 
       if (response.status === 200) {
