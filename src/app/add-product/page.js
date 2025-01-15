@@ -21,6 +21,7 @@ const AddProductPage = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
+  const apiKey = "enter your api key to test this feature";
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -55,10 +56,63 @@ const AddProductPage = () => {
     }
   }, [id]);
 
-  const handleInputChange = (e) => {
+  useEffect(() => {
+    loadGoogleMapsScript(apiKey);
+  }, []);
+
+  const loadGoogleMapsScript = (apiKey) => {
+    if (
+      !document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')
+    ) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+  };
+
+  const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "businessName" && value.trim() !== "") {
+      if (window.google && window.google.maps) {
+        const service = new window.google.maps.places.PlacesService(
+          document.createElement("div")
+        );
+
+        const request = {
+          query: value,
+          fields: ["place_id", "name", "formatted_address"],
+        };
+
+        service.findPlaceFromQuery(request, (results, status) => {
+          if (
+            status === window.google.maps.places.PlacesServiceStatus.OK &&
+            results
+          ) {
+            const place = results[0];
+            setFormData((prev) => ({
+              ...prev,
+              profileLink: place.formatted_address,
+              businessName: place.name,
+              placeId: place.place_id,
+            }));
+          } else {
+            toast.error("No business found. Please try again.");
+          }
+        });
+      } else {
+        toast.error("Google Maps API not loaded. Please try again later.");
+      }
+    }
   };
+
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
 
   const handleScan = (productId) => {
     setFormData((prev) => ({ ...prev, productId }));
