@@ -1,17 +1,25 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Safely access localStorage after component mounts
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
+
   const userId = user ? user._id : null;
 
   const handleLogout = () => {
-    router.push("signup");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    router.push("/signup");
   };
 
   return (
