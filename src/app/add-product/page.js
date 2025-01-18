@@ -1,6 +1,5 @@
-"use client";
-
-import { useState, useEffect } from "react";
+'use client'
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/shared/navbar";
 import QRScanner from "../components/add-product/qr-scanner";
@@ -9,6 +8,7 @@ import withAuth from "../utils/with-authenticated";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { LoadScript, Autocomplete } from "@react-google-maps/api";
 
 const platforms = [
   { value: "google", label: "Google Reviews" },
@@ -16,12 +16,14 @@ const platforms = [
   { value: "tripadvisor", label: "TripAdvisor" },
 ];
 
+const libraries = ["places"];
+
 const AddProductPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
-  const apiKey = "enter your api key to test this feature";
+  const apiKey = "add your api key here";
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -30,10 +32,10 @@ const AddProductPage = () => {
     profileLink: "",
   });
 
-  const [suggestions, setSuggestions] = useState([]);
+  const autocompleteRef = useRef(null);
 
   useEffect(() => {
-    if (!!id) {
+    if (id) {
       if (id === "1") {
         const mockData = {
           productId: "1",
@@ -57,57 +59,19 @@ const AddProductPage = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    loadGoogleMapsScript(apiKey);
-  }, []);
-
-  const loadGoogleMapsScript = (apiKey) => {
-    if (
-      !document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')
-    ) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-    }
-  };
-
-  const handleInputChange = async (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (name === "businessName" && value.trim() !== "") {
-      if (window.google && window.google.maps) {
-        const service = new window.google.maps.places.AutocompleteService();
-
-        service.getPlacePredictions(
-          { input: value, types: ["establishment"] },
-          (predictions, status) => {
-            if (
-              status === window.google.maps.places.PlacesServiceStatus.OK &&
-              predictions
-            ) {
-              setSuggestions(predictions.slice(0, 5));
-            } else {
-              setSuggestions([]);
-            }
-          }
-        );
-      } else {
-        toast.error("Google Maps API not loaded. Please try again later.");
-      }
-    } else {
-      setSuggestions([]);
-    }
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    setFormData((prev) => ({
-      ...prev,
-      businessName: suggestion.description,
-    }));
-    setSuggestions([]);
+  const handlePlaceChanged = () => {
+    if (autocompleteRef.current) {
+      const place = autocompleteRef.current.getPlace();
+      setFormData((prev) => ({
+        ...prev,
+        businessName: place.name || prev.businessName, // Retain previous name if none is selected
+      }));
+    }
   };
 
   const handleScan = (productId) => {
@@ -147,96 +111,97 @@ const AddProductPage = () => {
   };
 
   return (
-    <div className="h-dvh bg-[#17375F] overflow-y-hidden">
-      <Navbar />
-      <div className="fixed inset-x-4 top-[80px] bottom-0">
-        <div className="h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
-          <main className="flex-1 overflow-auto p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg text-[#6C7278] font-semibold">
-                {id ? "Editar Producto" : "Configura tu Producto"}
-              </h2>
-              <button onClick={() => router.back()} className="text-[#6DC1E6]">
-                <img src="/close.svg" alt="Close" width={20} height={20} />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <QRScanner id={Boolean(id)} onScan={handleScan} />
-              {[
-                {
-                  label: "Número de producto",
-                  name: "productId",
-                  value: formData.productId,
-                  type: "text",
-                },
-                {
-                  label: "Nombre de la sucursal / negocio",
-                  name: "businessName",
-                  value: formData.businessName,
-                  type: "text",
-                },
-                {
-                  label: "Link del perfil",
-                  name: "profileLink",
-                  value: formData.profileLink,
-                  type: "text",
-                },
-              ].map(({ label, name, value, type }) => (
-                <div key={name} className="space-y-1">
-                  <p className="text-sm text-gray-600">{label}</p>
-                  <input
-                    type={type}
-                    name={name}
-                    value={value}
-                    onChange={(e) => {
-                      if (name === "productId") {
-                        const regex = /^[A-Za-z0-9]{0,8}$/;
-                        if (regex.test(e.target.value)) {
-                          handleInputChange(e);
+    <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
+      <div className="h-dvh bg-[#17375F] overflow-y-hidden">
+        <Navbar />
+        <div className="fixed inset-x-4 top-[80px] bottom-0">
+          <div className="h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+            <main className="flex-1 overflow-auto p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg text-[#6C7278] font-semibold">
+                  {id ? "Editar Producto" : "Configura tu Producto"}
+                </h2>
+                <button
+                  onClick={() => router.back()}
+                  className="text-[#6DC1E6]"
+                >
+                  <img src="/close.svg" alt="Close" width={20} height={20} />
+                </button>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <QRScanner id={Boolean(id)} onScan={handleScan} />
+                {[
+                  {
+                    label: "Número de producto",
+                    name: "productId",
+                    value: formData.productId,
+                    type: "text",
+                  },
+                  {
+                    label: "Nombre de la sucursal / negocio",
+                    name: "businessName",
+                    value: formData.businessName,
+                    type: "text",
+                    autocomplete: true, // Indicates this field supports autocomplete
+                  },
+                  {
+                    label: "Link del perfil",
+                    name: "profileLink",
+                    value: formData.profileLink,
+                    type: "text",
+                  },
+                ].map(({ label, name, value, type, autocomplete }) => (
+                  <div key={name} className="space-y-1">
+                    <p className="text-sm text-gray-600">{label}</p>
+                    {autocomplete ? (
+                      <Autocomplete
+                        onLoad={(ref) => (autocompleteRef.current = ref)}
+                        onPlaceChanged={handlePlaceChanged}
+                      >
+                        <input
+                          type={type}
+                          name={name}
+                          value={value}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
+                        />
+                      </Autocomplete>
+                    ) : (
+                      <input
+                        type={type}
+                        name={name}
+                        value={value}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
+                        disabled={
+                          name === "productId" && (id || isProductIdFromQR)
                         }
-                      } else {
-                        handleInputChange(e);
-                      }
-                    }}
-                    className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
-                    disabled={name === "productId" && (id || isProductIdFromQR)}
-                  />
-                  {name === "businessName" && suggestions.length > 0 && (
-                    <ul className="absolute bg-white border border-gray-200 rounded-lg shadow-lg mt-1 w-full z-10">
-                      {suggestions.map((suggestion) => (
-                        <li
-                          key={suggestion.place_id}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                        >
-                          {suggestion.description}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
+                      />
+                    )}
+                  </div>
+                ))}
 
-              <PlatformSelector
-                id={Boolean(id)}
-                value={formData.platform}
-                onChange={handleInputChange}
-                platforms={platforms}
-              />
-            </form>
-          </main>
-          <footer className="p-6">
-            <button
-              onClick={handleSubmit}
-              type="submit"
-              className="w-full py-3 px-4 bg-[#17375F] hover:bg-[#17375F]/90 text-white rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17375F] transition-colors"
-            >
-              {id ? "Actualizar Producto" : "Guardar"}
-            </button>
-          </footer>
+                <PlatformSelector
+                  id={Boolean(id)}
+                  value={formData.platform}
+                  onChange={handleInputChange}
+                  platforms={platforms}
+                />
+              </form>
+            </main>
+            <footer className="p-6">
+              <button
+                onClick={handleSubmit}
+                type="submit"
+                className="w-full py-3 px-4 bg-[#17375F] hover:bg-[#17375F]/90 text-white rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17375F] transition-colors"
+              >
+                {id ? "Actualizar Producto" : "Guardar"}
+              </button>
+            </footer>
+          </div>
         </div>
       </div>
-    </div>
+    </LoadScript>
   );
 };
 
