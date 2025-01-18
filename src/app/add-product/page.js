@@ -30,6 +30,8 @@ const AddProductPage = () => {
     profileLink: "",
   });
 
+  const [suggestions, setSuggestions] = useState([]);
+
   useEffect(() => {
     if (!!id) {
       if (id === "1") {
@@ -43,7 +45,6 @@ const AddProductPage = () => {
       } else {
         const fetchProductData = async () => {
           try {
-            // const response = await axios.get(`/api/cards/product/${id}`);
             const response = await axios.get(`/api/establishment`);
             setFormData(response.data);
           } catch (error) {
@@ -78,41 +79,36 @@ const AddProductPage = () => {
 
     if (name === "businessName" && value.trim() !== "") {
       if (window.google && window.google.maps) {
-        const service = new window.google.maps.places.PlacesService(
-          document.createElement("div")
-        );
+        const service = new window.google.maps.places.AutocompleteService();
 
-        const request = {
-          query: value,
-          fields: ["place_id", "name", "formatted_address"],
-        };
-
-        service.findPlaceFromQuery(request, (results, status) => {
-          if (
-            status === window.google.maps.places.PlacesServiceStatus.OK &&
-            results
-          ) {
-            const place = results[0];
-            setFormData((prev) => ({
-              ...prev,
-              profileLink: place.formatted_address,
-              businessName: place.name,
-              placeId: place.place_id,
-            }));
-          } else {
-            toast.error("No business found. Please try again.");
+        service.getPlacePredictions(
+          { input: value, types: ["establishment"] },
+          (predictions, status) => {
+            if (
+              status === window.google.maps.places.PlacesServiceStatus.OK &&
+              predictions
+            ) {
+              setSuggestions(predictions.slice(0, 5));
+            } else {
+              setSuggestions([]);
+            }
           }
-        });
+        );
       } else {
         toast.error("Google Maps API not loaded. Please try again later.");
       }
+    } else {
+      setSuggestions([]);
     }
   };
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prev) => ({ ...prev, [name]: value }));
-  // };
+  const handleSuggestionClick = (suggestion) => {
+    setFormData((prev) => ({
+      ...prev,
+      businessName: suggestion.description,
+    }));
+    setSuggestions([]);
+  };
 
   const handleScan = (productId) => {
     setFormData((prev) => ({ ...prev, productId }));
@@ -140,11 +136,6 @@ const AddProductPage = () => {
       } else {
         toast.error(
           "No se pudo actualizar el producto. Por favor, inténtalo de nuevo."
-        );
-        toast.success(
-          id
-            ? "No se pudo actualizar el producto. Por favor, inténtalo de nuevo."
-            : "No se pudo agregar el producto. Por favor, inténtalo de nuevo."
         );
       }
     } catch (error) {
@@ -210,6 +201,19 @@ const AddProductPage = () => {
                     className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
                     disabled={name === "productId" && (id || isProductIdFromQR)}
                   />
+                  {name === "businessName" && suggestions.length > 0 && (
+                    <ul className="absolute bg-white border border-gray-200 rounded-lg shadow-lg mt-1 w-full z-10">
+                      {suggestions.map((suggestion) => (
+                        <li
+                          key={suggestion.place_id}
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                        >
+                          {suggestion.description}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
 

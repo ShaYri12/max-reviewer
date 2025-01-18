@@ -97,13 +97,10 @@ const ResetPasswordForm = () => {
     <div className="h-dvh bg-[#17375F] overflow-y-hidden">
       <Navbar />
 
-      <div className="bg-white top-[80px] fixed max-w-md mx-auto bottom-0 right-4 left-4 rounded-t-xl">
+      <div className=" md:top-[80px] top-[100px] fixed max-w-md mx-auto bottom-0 right-4 left-4 rounded-t-xl">
         <div className=" bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
           <div className="w-full max-w-md h-full">
             <div className="flex flex-col items-center md:mb-8 mb-4">
-              <div className="flex items-center gap-2 md:mb-3 px-6  ">
-                <img src="/logo.png" className="md:w-auto w-[300px]" />
-              </div>
               <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
                 Cambiar Contraseña
               </h1>
@@ -112,7 +109,7 @@ const ResetPasswordForm = () => {
                 actualizar el acceso a tu cuenta.
               </p>
             </div>
-            <div className="fixed inset-x-4 md:top-[260px] top-[200px] bottom-0">
+            <div className="fixed inset-x-4 md:top-[200px] top-[230px] bottom-0">
               <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
                 <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
                   <form

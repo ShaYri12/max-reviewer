@@ -157,7 +157,11 @@ const SignupForm = ({ userData, onSubmit }) => {
         <div className="w-full max-w-md h-full mt-16 md:mt-0">
           <div className="flex flex-col items-center md:mb-8 mb-4">
             <div className="flex items-center gap-2 md:mb-3 px-6 pt-6 md:pb-6 pb-4">
-              <img src="/logo.png" className="md:w-auto w-[300px]" />
+              {userData ? (
+                <div className="md:mt-14 mt-10"></div>
+              ) : (
+                <img src="/logo.png" className="md:w-auto w-[300px]" />
+              )}
             </div>
             <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
               Crea tu cuenta
