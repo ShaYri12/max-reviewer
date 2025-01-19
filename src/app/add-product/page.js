@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/shared/navbar";
@@ -9,6 +9,7 @@ import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { LoadScript, Autocomplete } from "@react-google-maps/api";
+import StyledAutocomplete from "../components/add-product/styled-autocomplete";
 
 const platforms = [
   { value: "google", label: "Google Reviews" },
@@ -23,7 +24,7 @@ const AddProductPage = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
-  const apiKey = "add your api key here";
+  const apiKey = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo";
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -110,6 +111,13 @@ const AddProductPage = () => {
     }
   };
 
+  const handlePlaceSelect = (place) => {
+    setFormData((prev) => ({
+      ...prev,
+      businessName: place.name || prev.businessName,
+    }));
+  };
+
   return (
     <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
       <div className="h-dvh bg-[#17375F] overflow-y-hidden">
@@ -154,18 +162,13 @@ const AddProductPage = () => {
                   <div key={name} className="space-y-1">
                     <p className="text-sm text-gray-600">{label}</p>
                     {autocomplete ? (
-                      <Autocomplete
-                        onLoad={(ref) => (autocompleteRef.current = ref)}
-                        onPlaceChanged={handlePlaceChanged}
-                      >
-                        <input
-                          type={type}
-                          name={name}
-                          value={value}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
-                        />
-                      </Autocomplete>
+                      <StyledAutocomplete
+                        value={formData.businessName}
+                        onChange={handleInputChange}
+                        name="businessName"
+                        onPlaceSelect={handlePlaceSelect}
+                        autocompleteRef={autocompleteRef}
+                      />
                     ) : (
                       <input
                         type={type}
@@ -180,7 +183,6 @@ const AddProductPage = () => {
                     )}
                   </div>
                 ))}
-
                 <PlatformSelector
                   id={Boolean(id)}
                   value={formData.platform}
