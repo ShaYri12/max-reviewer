@@ -47,7 +47,9 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
   };
 
   const currentChartData = {
-    labels: initialData.data.map((item) => item.month),
+    labels: initialData.data.map((item) =>
+      selectedOption === "Últimos años" ? item.year : item.month
+    ),
     datasets: [
       {
         data: initialData.data.map((item) => item.value),
@@ -84,7 +86,7 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
       y: {
         min: 0,
         ticks: {
-          stepSize: 25,
+          callback: (value) => (Number.isInteger(value) ? value : ""),
           font: {
             size: 10,
           },
@@ -123,6 +125,20 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
     },
   };
 
+  const updateYAxisOptions = () => {
+    const maxValue = Math.max(...initialData.data.map((item) => item.value));
+    const stepSize = Math.max(1, Math.ceil(maxValue / 5));
+
+    options.scales.y.max = Math.ceil(maxValue / stepSize) * stepSize;
+    options.scales.y.ticks.stepSize = stepSize;
+  };
+
+  updateYAxisOptions();
+
+  useEffect(() => {
+    updateYAxisOptions();
+  }, [initialData]);
+
   return (
     <div className="w-full">
       <div className="rounded-[20px] border-[4px] border-[#71C9ED] bg-white px-5 py-8">
@@ -144,17 +160,20 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
             {isOpen && (
               <div className="absolute top-full left-0 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg z-10">
                 <div className="py-1">
-                  {["Últimos 3 meses", "Últimos 6 meses", "Último año"].map(
-                    (option) => (
-                      <button
-                        key={option}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
-                        onClick={() => handleOptionSelect(option)}
-                      >
-                        {option}
-                      </button>
-                    )
-                  )}
+                  {[
+                    "Últimos 3 meses",
+                    "Últimos 6 meses",
+                    "Último año",
+                    "Últimos años",
+                  ].map((option) => (
+                    <button
+                      key={option}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-100 text-[#6C7278] text-base"
+                      onClick={() => handleOptionSelect(option)}
+                    >
+                      {option}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}

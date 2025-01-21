@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 
 const StyledAutocomplete = ({
@@ -8,6 +8,8 @@ const StyledAutocomplete = ({
   onPlaceSelect,
   autocompleteRef,
 }) => {
+  const inputRef = useRef(null);
+
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
@@ -16,6 +18,19 @@ const StyledAutocomplete = ({
       }
     }
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (inputRef.current) {
+        inputRef.current.blur(); // Closes the dropdown by blurring the input
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, []);
 
   return (
     <div className="relative">
@@ -28,6 +43,7 @@ const StyledAutocomplete = ({
         }}
       >
         <input
+          ref={inputRef}
           type="text"
           name={name}
           value={value}

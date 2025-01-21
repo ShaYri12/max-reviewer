@@ -65,6 +65,11 @@ const ResetPasswordForm = () => {
       return;
     }
 
+    if (formData.oldPassword === formData.newPassword) {
+      toast.error("La nueva contraseña no puede ser igual a la actual.");
+      return;
+    }
+
     if (formData.newPassword !== formData.confirmPassword) {
       toast.error("Las contraseñas no coinciden.");
       return;

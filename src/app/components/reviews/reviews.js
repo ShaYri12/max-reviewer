@@ -45,11 +45,17 @@ const generateMockData = () => {
 
 const processReviewsData = (data, monthsToFilter) => {
   const currentDate = new Date();
-  const filterDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() - monthsToFilter + 1,
-    1
-  );
+  let filterDate;
+
+  if (monthsToFilter === "all") {
+    filterDate = new Date(0); // Beginning of time
+  } else {
+    filterDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - monthsToFilter + 1,
+      1
+    );
+  }
 
   const filteredReviews = Object.entries(data.starCounts).filter(
     ([_, review]) => {
@@ -86,46 +92,58 @@ const processReviewsData = (data, monthsToFilter) => {
     }))
     .sort((a, b) => b.stars - a.stars);
 
-  const monthlyReviews = filteredReviews.reduce((acc, [_, review]) => {
+  const reviewsByPeriod = filteredReviews.reduce((acc, [_, review]) => {
     const date = new Date(review.day);
-    const monthYear = date.toLocaleString("default", {
-      month: "short",
-      year: "numeric",
-    });
+    const key =
+      monthsToFilter === "all"
+        ? date.getFullYear().toString()
+        : date.toLocaleString("default", { month: "short", year: "numeric" });
 
-    if (!acc[monthYear]) {
-      acc[monthYear] = {
+    if (!acc[key]) {
+      acc[key] = {
         count: 0,
         monthIndex: date.getMonth(),
         year: date.getFullYear(),
       };
     }
 
-    acc[monthYear].count++;
+    acc[key].count++;
     return acc;
   }, {});
 
-  const chartData = [];
-  for (let i = monthsToFilter - 1; i >= 0; i--) {
-    const date = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - i,
-      1
-    );
-    const monthYear = date.toLocaleString("default", {
-      month: "short",
-      year: "numeric",
-    });
-    const monthName = date.toLocaleString("default", { month: "short" });
+  let chartData;
 
-    chartData.push({
-      month: monthName,
-      value: monthlyReviews[monthYear]?.count || 0,
-      year: date.getFullYear(),
-    });
+  if (monthsToFilter === "all") {
+    chartData = Object.entries(reviewsByPeriod)
+      .map(([year, data]) => ({
+        month: year,
+        value: data.count,
+        year: Number.parseInt(year),
+      }))
+      .sort((a, b) => a.year - b.year);
+  } else {
+    chartData = [];
+    for (let i = monthsToFilter - 1; i >= 0; i--) {
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - i,
+        1
+      );
+      const monthYear = date.toLocaleString("default", {
+        month: "short",
+        year: "numeric",
+      });
+      const monthName = date.toLocaleString("default", { month: "short" });
+
+      chartData.push({
+        month: monthName,
+        value: reviewsByPeriod[monthYear]?.count || 0,
+        year: date.getFullYear(),
+      });
+    }
   }
 
-  const chartTotal = chartData.reduce((sum, month) => sum + month.value, 0);
+  const chartTotal = chartData.reduce((sum, period) => sum + period.value, 0);
   if (chartTotal !== totalReviews) {
     console.error("Review count mismatch:", { chartTotal, totalReviews });
   }
@@ -204,6 +222,7 @@ const ReviewPage = ({ dashboard = false }) => {
     "Últimos 3 meses": 3,
     "Últimos 6 meses": 6,
     "Último año": 12,
+    "Últimos años": "all",
   };
 
   return (
