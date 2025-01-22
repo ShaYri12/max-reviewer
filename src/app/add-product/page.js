@@ -24,7 +24,8 @@ const AddProductPage = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
-  const apiKey = "YOUR API KEY HERE";a
+  const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
+  const apiKey = "api-key"; // Replace with your Google Maps API key
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -116,6 +117,7 @@ const AddProductPage = () => {
       ...prev,
       businessName: place.name || prev.businessName,
     }));
+    setIsBusinessNameSelected(true);
   };
 
   return (
@@ -166,8 +168,12 @@ const AddProductPage = () => {
                         value={formData.businessName}
                         onChange={handleInputChange}
                         name="businessName"
-                        onPlaceSelect={handlePlaceSelect}
+                        onPlaceSelect={(place) => {
+                          handlePlaceSelect(place);
+                          setIsBusinessNameSelected(true); // Disable field after selection
+                        }}
                         autocompleteRef={autocompleteRef}
+                        disabled={isBusinessNameSelected}
                       />
                     ) : (
                       <input

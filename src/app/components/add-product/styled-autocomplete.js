@@ -7,6 +7,7 @@ const StyledAutocomplete = ({
   name,
   onPlaceSelect,
   autocompleteRef,
+  disabled, // Add the disabled prop
 }) => {
   const inputRef = useRef(null);
 
@@ -49,6 +50,7 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
+          disabled={disabled} // Apply the disabled prop
         />
       </Autocomplete>
       <style jsx global>{`

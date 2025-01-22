@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -60,6 +60,7 @@ const SignupForm = ({ userData, onSubmit }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -129,6 +130,7 @@ const SignupForm = ({ userData, onSubmit }) => {
     };
 
     try {
+      setLoading(true);
       const response = await axios.post("/api/customers", payload);
 
       if (response.data?.status === "OK" && response.data?.data) {
@@ -142,6 +144,59 @@ const SignupForm = ({ userData, onSubmit }) => {
         error.response?.data?.message ||
           "No se pudo completar el registro. Por favor, verifica tus datos."
       );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    if (
+      !formData.companyName ||
+      !formData.email ||
+      !formData.phone
+    ) {
+      toast.error("Todos los campos son obligatorios.");
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      toast.error("Por favor, ingresa una dirección de correo válida.");
+      return;
+    }
+
+    if (formData.phone.length !== 10) {
+      toast.error("El teléfono debe tener exactamente 10 dígitos.");
+      return;
+    }
+
+    const fullPhone = `+52${formData.phone}`;
+
+    const payload = {
+      firstName: formData.companyName.split(" ")[0],
+      lastName: formData.companyName.split(" ")[1] || "",
+      email: formData.email,
+      phone: fullPhone,
+    };
+
+    try {
+      setLoading(true);
+      const response = await axios.put(`/api/customers/${userData.id}`, payload);
+
+      if (response.data?.status === "OK" && response.data?.data) {
+        toast.success("Cuenta actualizada exitosamente!");
+        router.push("/add-product");
+      } else {
+        toast.error("Error al actualizar la cuenta. Por favor, inténtalo de nuevo.");
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "No se pudo completar la actualización. Por favor, verifica tus datos."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -164,7 +219,7 @@ const SignupForm = ({ userData, onSubmit }) => {
               )}
             </div>
             <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
-              Crea tu cuenta
+              {userData ? "Actualizar tu cuenta" : "Crea tu cuenta"}
             </h1>
             <p className="text-white text-center text-sm">
               Para configurar tu producto{" "}
@@ -177,7 +232,7 @@ const SignupForm = ({ userData, onSubmit }) => {
               <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
                 <form
                   className="space-y-4"
-                  onSubmit={userData ? onSubmit : handleSubmit}
+                  onSubmit={userData ? handleUpdate : handleSubmit}
                   noValidate
                 >
                   <InputField
@@ -233,8 +288,9 @@ const SignupForm = ({ userData, onSubmit }) => {
                   <button
                     type="submit"
                     className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+                    disabled={loading}
                   >
-                    {userData ? "Actualizar" : "Registrarte"}
+                    {loading ? "Cargando..." : userData ? "Actualizar" : "Registrarte"}
                   </button>
                 </form>
                 {!userData && (
