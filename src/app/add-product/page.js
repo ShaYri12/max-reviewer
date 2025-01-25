@@ -25,7 +25,7 @@ const AddProductPage = () => {
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
   const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
-  const apiKey = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo"; // Replace with your Google Maps API key
+  const apiKey = "API key"; // Replace with your Google Maps API key
 
   const [formData, setFormData] = useState({
     productId: "",

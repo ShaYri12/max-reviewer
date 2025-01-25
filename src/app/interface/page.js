@@ -19,29 +19,27 @@ const Interface = () => {
     const fetchProducts = async () => {
       setLoading(true);
 
-      setTimeout(async () => {
-        try {
-          const mockData = [
-            {
-              cardId: "1",
-              cardCode: "64IV9",
-              cardType: "Google Review",
-              establishmentId: 1,
-              establishmentName: "Café Córdoba",
-              timesVisited: 2359,
-            },
-          ];
+      try {
+        const mockData = [
+          {
+            cardId: "1",
+            cardCode: "64IV9",
+            cardType: "Google Review",
+            establishmentId: 1,
+            establishmentName: "Café Córdoba",
+            timesVisited: 2359,
+          },
+        ];
 
-          setProducts(mockData);
+        setProducts(mockData);
 
-          const response = await axios.get(`/api/cards/customer/${customerId}`);
-          setProducts(response.data);
-        } catch (error) {
-          console.error("Failed to fetch products:", error);
-        } finally {
-          setLoading(false);
-        }
-      }, 1000);
+        const response = await axios.get(`/api/cards/customer/${customerId}`);
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProducts();
