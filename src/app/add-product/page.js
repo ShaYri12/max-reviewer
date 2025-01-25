@@ -25,7 +25,7 @@ const AddProductPage = () => {
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
   const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
-  const apiKey = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo"; // Replace with your Google Maps API keyw
+  const apiKey = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo"; // Replace with your Google Maps API key
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -124,8 +124,104 @@ const AddProductPage = () => {
     setIsBusinessNameSelected(true); // Disable both fields
   };
 
+  // Check if the Google Maps API is already loaded
+  const isGoogleApiLoaded = typeof window !== "undefined" && window.google;
+
   return (
-    <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
+    // Conditionally load the script only if it's not already loaded
+    !isGoogleApiLoaded ? (
+      <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
+        <div className="h-dvh bg-[#17375F] overflow-y-hidden">
+          <Navbar />
+          <div className="fixed inset-x-4 top-[80px] bottom-0">
+            <div className="h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+              <main className="flex-1 overflow-auto p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg text-[#6C7278] font-semibold">
+                    {id ? "Editar Producto" : "Configura tu Producto"}
+                  </h2>
+                  <button
+                    onClick={() => router.back()}
+                    className="text-[#6DC1E6]"
+                  >
+                    <img src="/close.svg" alt="Close" width={20} height={20} />
+                  </button>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <QRScanner id={Boolean(id)} onScan={handleScan} />
+                  {[
+                    {
+                      label: "Número de producto",
+                      name: "productId",
+                      value: formData.productId,
+                      type: "text",
+                    },
+                    {
+                      label: "Nombre de la sucursal / negocio",
+                      name: "businessName",
+                      value: formData.businessName,
+                      type: "text",
+                      autocomplete: true, // Indicates this field supports autocomplete
+                    },
+                    {
+                      label: "Link del perfil",
+                      name: "profileLink",
+                      value: formData.profileLink,
+                      type: "text",
+                    },
+                  ].map(({ label, name, value, type, autocomplete }) => (
+                    <div key={name} className="space-y-1">
+                      <p className="text-sm text-gray-600">{label}</p>
+                      {autocomplete ? (
+                        <StyledAutocomplete
+                          value={formData.businessName}
+                          onChange={handleInputChange}
+                          name="businessName"
+                          onPlaceSelect={handlePlaceSelect} // Call handlePlaceSelect on selection
+                          autocompleteRef={autocompleteRef}
+                          disabled={isBusinessNameSelected}
+                        />
+                      ) : (
+                        <input
+                          type={type}
+                          name={name}
+                          value={value}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
+                          disabled={
+                            (name === "productId" &&
+                              (id || isProductIdFromQR)) ||
+                            (isBusinessNameSelected &&
+                              (name === "businessName" ||
+                                name === "profileLink")) // Disable both
+                          }
+                        />
+                      )}
+                    </div>
+                  ))}
+
+                  <PlatformSelector
+                    id={Boolean(id)}
+                    value={formData.platform}
+                    onChange={handleInputChange}
+                    platforms={platforms}
+                  />
+                </form>
+              </main>
+              <footer className="p-6">
+                <button
+                  onClick={handleSubmit}
+                  type="submit"
+                  className="w-full py-3 px-4 bg-[#17375F] hover:bg-[#17375F]/90 text-white rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#17375F] transition-colors"
+                >
+                  {id ? "Actualizar Producto" : "Guardar"}
+                </button>
+              </footer>
+            </div>
+          </div>
+        </div>
+      </LoadScript>
+    ) : (
       <div className="h-dvh bg-[#17375F] overflow-y-hidden">
         <Navbar />
         <div className="fixed inset-x-4 top-[80px] bottom-0">
@@ -213,7 +309,7 @@ const AddProductPage = () => {
           </div>
         </div>
       </div>
-    </LoadScript>
+    )
   );
 };
 
