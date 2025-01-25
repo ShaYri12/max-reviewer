@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 
 const StyledAutocomplete = ({
@@ -7,9 +7,11 @@ const StyledAutocomplete = ({
   name,
   onPlaceSelect,
   autocompleteRef,
-  disabled, // Add the disabled prop
+  disabled,
 }) => {
   const inputRef = useRef(null);
+  const [isLoaded, setIsLoaded] = useState(true);
+  const [error, setError] = useState(null);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -23,7 +25,7 @@ const StyledAutocomplete = ({
   useEffect(() => {
     const handleScroll = () => {
       if (inputRef.current) {
-        inputRef.current.blur(); // Closes the dropdown by blurring the input
+        inputRef.current.blur();
       }
     };
 
@@ -33,10 +35,47 @@ const StyledAutocomplete = ({
     };
   }, []);
 
+  const handleLoad = (ref) => {
+    autocompleteRef.current = ref;
+    setIsLoaded(true);
+    setError(null);
+  };
+
+  const handleError = () => {
+    setIsLoaded(false);
+    setError("Failed to load Google Maps API. Please try again later.");
+  };
+
+  if (!isLoaded || error) {
+    return (
+      <div className="space-y-2">
+        <input
+          type="text"
+          name={name}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          placeholder="Enter a location"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
+            <strong className="font-bold">Error!</strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
       <Autocomplete
-        onLoad={(ref) => (autocompleteRef.current = ref)}
+        onLoad={handleLoad}
+        onError={handleError}
         onPlaceChanged={handlePlaceChanged}
         options={{
           types: ["establishment"],
@@ -49,8 +88,9 @@ const StyledAutocomplete = ({
           name={name}
           value={value}
           onChange={onChange}
+          disabled={disabled}
+          placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
-          disabled={disabled} // Apply the disabled prop
         />
       </Autocomplete>
       <style jsx global>{`
