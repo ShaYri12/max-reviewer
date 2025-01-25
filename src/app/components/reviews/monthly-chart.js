@@ -70,6 +70,14 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10,
+      },
+    },
     scales: {
       x: {
         grid: {
@@ -126,10 +134,22 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
   };
 
   const updateYAxisOptions = () => {
-    const maxValue = Math.max(...initialData.data.map((item) => item.value));
-    const stepSize = Math.max(1, Math.ceil(maxValue / 5));
+    const values = initialData.data.map((item) => item.value);
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const range = maxValue - minValue;
+    const padding = range * 0.1; // Add 10% padding
 
-    options.scales.y.max = Math.ceil(maxValue / stepSize) * stepSize;
+    const desiredSteps = 5;
+    const rawStepSize = (range + 2 * padding) / desiredSteps;
+    const stepSize = Math.ceil(rawStepSize);
+
+    const adjustedMin = Math.max(0, Math.floor(minValue - padding));
+    const adjustedMax = Math.ceil(maxValue + padding);
+
+    options.scales.y.min = adjustedMin;
+    options.scales.y.max =
+      adjustedMax + (stepSize - ((adjustedMax - adjustedMin) % stepSize));
     options.scales.y.ticks.stepSize = stepSize;
   };
 
@@ -137,7 +157,7 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
 
   useEffect(() => {
     updateYAxisOptions();
-  }, [initialData]);
+  }, [initialData, selectedOption]);
 
   return (
     <div className="w-full">
