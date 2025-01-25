@@ -25,7 +25,7 @@ const AddProductPage = () => {
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
   const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
-  const apiKey = "api-key"; // Replace with your Google Maps API key
+  const apiKey = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo"; // Replace with your Google Maps API keyw
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -113,11 +113,15 @@ const AddProductPage = () => {
   };
 
   const handlePlaceSelect = (place) => {
+    const selectedName = place.name || formData.businessName;
+
     setFormData((prev) => ({
       ...prev,
-      businessName: place.name || prev.businessName,
+      businessName: selectedName,
+      profileLink: selectedName, // Copy the value to the "Link del perfil" field
     }));
-    setIsBusinessNameSelected(true);
+
+    setIsBusinessNameSelected(true); // Disable both fields
   };
 
   return (
@@ -168,10 +172,7 @@ const AddProductPage = () => {
                         value={formData.businessName}
                         onChange={handleInputChange}
                         name="businessName"
-                        onPlaceSelect={(place) => {
-                          handlePlaceSelect(place);
-                          setIsBusinessNameSelected(true); // Disable field after selection
-                        }}
+                        onPlaceSelect={handlePlaceSelect} // Call handlePlaceSelect on selection
                         autocompleteRef={autocompleteRef}
                         disabled={isBusinessNameSelected}
                       />
@@ -183,12 +184,15 @@ const AddProductPage = () => {
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
                         disabled={
-                          name === "productId" && (id || isProductIdFromQR)
+                          (name === "productId" && (id || isProductIdFromQR)) ||
+                          (isBusinessNameSelected &&
+                            (name === "businessName" || name === "profileLink")) // Disable both
                         }
                       />
                     )}
                   </div>
                 ))}
+
                 <PlatformSelector
                   id={Boolean(id)}
                   value={formData.platform}
