@@ -25,7 +25,7 @@ const AddProductPage = () => {
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
   const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
-  const apiKey = "API key"; // Replace with your Google Maps API key
+  const apiKey = "API key"; 
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -71,7 +71,7 @@ const AddProductPage = () => {
       const place = autocompleteRef.current.getPlace();
       setFormData((prev) => ({
         ...prev,
-        businessName: place.name || prev.businessName, // Retain previous name if none is selected
+        businessName: place.name || prev.businessName, 
       }));
     }
   };
@@ -79,13 +79,13 @@ const AddProductPage = () => {
   const handleScan = (productId) => {
     setFormData((prev) => ({ ...prev, productId }));
     setIsProductIdFromQR(true);
-    toast.success("¡Código QR escaneado con éxito!"); // Success toast
+    toast.success("¡Código QR escaneado con éxito!"); 
   };
 
   const handleError = () => {
     toast.error(
       "¡Error al escanear el código QR. ¡Por favor, inténtalo de nuevo!"
-    ); // Error toast
+    ); 
   };
 
   const handleSubmit = async (e) => {
@@ -125,17 +125,15 @@ const AddProductPage = () => {
     setFormData((prev) => ({
       ...prev,
       businessName: selectedName,
-      profileLink: selectedName, // Copy the value to the "Link del perfil" field
+      profileLink: selectedName,  
     }));
 
-    setIsBusinessNameSelected(true); // Disable both fields
+    setIsBusinessNameSelected(true); 
   };
 
-  // Check if the Google Maps API is already loaded
   const isGoogleApiLoaded = typeof window !== "undefined" && window.google;
 
   return (
-    // Conditionally load the script only if it's not already loaded
     !isGoogleApiLoaded ? (
       <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
         <div className="h-dvh bg-[#17375F] overflow-y-hidden">
@@ -172,7 +170,7 @@ const AddProductPage = () => {
                       name: "businessName",
                       value: formData.businessName,
                       type: "text",
-                      autocomplete: true, // Indicates this field supports autocomplete
+                      autocomplete: true,  
                     },
                     {
                       label: "Link del perfil",
@@ -188,7 +186,7 @@ const AddProductPage = () => {
                           value={formData.businessName}
                           onChange={handleInputChange}
                           name="businessName"
-                          onPlaceSelect={handlePlaceSelect} // Call handlePlaceSelect on selection
+                          onPlaceSelect={handlePlaceSelect}  
                           autocompleteRef={autocompleteRef}
                           disabled={isBusinessNameSelected}
                         />
@@ -204,7 +202,7 @@ const AddProductPage = () => {
                               (id || isProductIdFromQR)) ||
                             (isBusinessNameSelected &&
                               (name === "businessName" ||
-                                name === "profileLink")) // Disable both
+                                name === "profileLink")) 
                           }
                         />
                       )}
@@ -263,7 +261,7 @@ const AddProductPage = () => {
                     name: "businessName",
                     value: formData.businessName,
                     type: "text",
-                    autocomplete: true, // Indicates this field supports autocomplete
+                    autocomplete: true,  
                   },
                   {
                     label: "Link del perfil",
@@ -279,7 +277,7 @@ const AddProductPage = () => {
                         value={formData.businessName}
                         onChange={handleInputChange}
                         name="businessName"
-                        onPlaceSelect={handlePlaceSelect} // Call handlePlaceSelect on selection
+                        onPlaceSelect={handlePlaceSelect} 
                         autocompleteRef={autocompleteRef}
                         disabled={isBusinessNameSelected}
                       />
@@ -293,7 +291,7 @@ const AddProductPage = () => {
                         disabled={
                           (name === "productId" && (id || isProductIdFromQR)) ||
                           (isBusinessNameSelected &&
-                            (name === "businessName" || name === "profileLink")) // Disable both
+                            (name === "businessName" || name === "profileLink"))  
                         }
                       />
                     )}

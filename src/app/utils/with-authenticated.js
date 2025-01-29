@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 
 const isJWT = (token) => {
   if (token === null || token === undefined || token.trim() === "") {
-    return false; // Handle null, undefined, or empty strings explicitly
+    return false; 
   }
 
   const parts = token.split(".");
   if (parts.length !== 3) return false;
 
   try {
-    // Decode the payload to check if it's valid JSON
     const payload = JSON.parse(atob(parts[1]));
 
     // Optional: Check for token expiry

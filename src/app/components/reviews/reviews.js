@@ -48,7 +48,7 @@ const processReviewsData = (data, monthsToFilter) => {
   let filterDate;
 
   if (monthsToFilter === "all") {
-    filterDate = new Date(0); // Beginning of time
+    filterDate = new Date(0);  
   } else {
     filterDate = new Date(
       currentDate.getFullYear(),
@@ -210,12 +210,12 @@ const ReviewPage = ({ dashboard = false }) => {
     if (loading || !reviewData) {
       timer = setTimeout(() => {
         setShowError(true);
-      }, 3000); // 30 seconds
+      }, 3000);  
     } else {
       setShowError(false);
     }
 
-    return () => clearTimeout(timer); // Clean up the timer
+    return () => clearTimeout(timer); 
   }, [loading, !reviewData]);
 
   const periodOptions = {

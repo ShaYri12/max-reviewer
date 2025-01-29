@@ -10,7 +10,6 @@ const Sidebar = ({ isOpen, onClose }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Safely access localStorage after component mounts
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setUser(storedUser);
   }, []);

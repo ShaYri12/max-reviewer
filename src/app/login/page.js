@@ -24,7 +24,6 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
-    // Check localStorage for remembered credentials
     const rememberedEmail = localStorage.getItem("rememberedEmail");
     const rememberedPassword = localStorage.getItem("rememberedPassword");
     const isRemembered = localStorage.getItem("rememberMe") === "true";
@@ -119,7 +118,6 @@ const LoginForm = () => {
         <div className="fixed inset-x-4 md:top-[200px] top-[140px] bottom-0">
           <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
             <div className="bg-white flex flex-col justify-between rounded-t-3xl h-full px-5 py-6 overflow-hidden">
-              {/* This div is scrollable */}
               <div className="h-full overflow-y-auto">
                 <form className="space-y-4" onSubmit={handleSubmit} noValidate>
                   <div>

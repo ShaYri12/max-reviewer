@@ -48,7 +48,7 @@ const QRScanner = ({ id, onScan, onError }) => {
           if (qrCode) {
             const scannedUrl = qrCode.data;
             const productId = scannedUrl.split("/").pop();
-            onScan(productId); // Trigger onScan from the parent
+            onScan(productId);  
             stopCamera();
             setScanning(false);
           } else {
@@ -67,7 +67,7 @@ const QRScanner = ({ id, onScan, onError }) => {
       };
     } catch (error) {
       console.error("Error accessing camera:", error);
-      onError(); // Trigger onError from the parent
+      onError();  
       setScanning(false);
     }
   };
