@@ -24,7 +24,6 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
-    // Check localStorage for remembered credentials
     const rememberedEmail = localStorage.getItem("rememberedEmail");
     const rememberedPassword = localStorage.getItem("rememberedPassword");
     const isRemembered = localStorage.getItem("rememberMe") === "true";
