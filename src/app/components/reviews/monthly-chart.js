@@ -144,8 +144,15 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
     const rawStepSize = (range + 2 * padding) / desiredSteps;
     const stepSize = Math.ceil(rawStepSize);
 
-    const adjustedMin = Math.max(0, Math.floor(minValue - padding));
-    const adjustedMax = Math.ceil(maxValue + padding);
+    let adjustedMin = Math.floor(minValue - padding);
+    let adjustedMax = Math.ceil(maxValue + padding);
+
+    // Ensure min is not exactly 0 to avoid cut-off issue
+    if (minValue === 0) {
+      adjustedMin = -1;
+    } else {
+      adjustedMin = Math.max(0, adjustedMin);
+    }
 
     options.scales.y.min = adjustedMin;
     options.scales.y.max =
