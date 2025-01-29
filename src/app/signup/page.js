@@ -201,7 +201,8 @@ const SignupForm = ({ userData, onSubmit }) => {
   };
 
   return (
-    <div className="h-screen  bg-[#17375F]  fixed">
+  <div className="relative w-full">
+      <div className="h-screen bg-[#17375F] w-full fixed">
       {userData && (
         <div className="fixed top-0 w-full z-50">
           <Navbar />
@@ -317,6 +318,7 @@ const SignupForm = ({ userData, onSubmit }) => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
