@@ -208,7 +208,7 @@ const SignupForm = ({ userData, onSubmit }) => {
         </div>
       )}
 
-      <div className=" bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
+      <div className=" bg-[#17375F] flex items-center justify-center px-4 overflow-hidden fixed">
         <div className="w-full max-w-md h-full mt-16 md:mt-0">
           <div className="flex flex-col items-center md:mb-8 mb-4">
             <div className="flex items-center gap-2 md:mb-3 px-6 pt-6 md:pb-6 pb-4">
