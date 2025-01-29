@@ -201,7 +201,7 @@ const SignupForm = ({ userData, onSubmit }) => {
   };
 
   return (
-    <div className="h-dvh  bg-[#17375F]  fixed">
+    <div className="h-screen  bg-[#17375F]  fixed">
       {userData && (
         <div className="fixed top-0 w-full z-50">
           <Navbar />
