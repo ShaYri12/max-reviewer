@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import jsQR from "jsqr";
 
-const QRScanner = ({ id, onScan }) => {
+const QRScanner = ({ id, onScan, onError }) => {
   const [scanning, setScanning] = useState(false);
   const videoRef = useRef(null);
 
@@ -38,7 +38,7 @@ const QRScanner = ({ id, onScan }) => {
             canvas.width,
             canvas.height
           );
-          
+
           const qrCode = jsQR(
             imageData.data,
             imageData.width,
@@ -48,7 +48,7 @@ const QRScanner = ({ id, onScan }) => {
           if (qrCode) {
             const scannedUrl = qrCode.data;
             const productId = scannedUrl.split("/").pop();
-            onScan(productId);
+            onScan(productId); // Trigger onScan from the parent
             stopCamera();
             setScanning(false);
           } else {
@@ -67,10 +67,10 @@ const QRScanner = ({ id, onScan }) => {
       };
     } catch (error) {
       console.error("Error accessing camera:", error);
+      onError(); // Trigger onError from the parent
       setScanning(false);
     }
   };
-
   return (
     <div
       className={`relative w-full h-64 border-2 border-[#71C9ED] rounded-lg overflow-hidden ${

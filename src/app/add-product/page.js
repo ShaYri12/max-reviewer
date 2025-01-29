@@ -79,6 +79,13 @@ const AddProductPage = () => {
   const handleScan = (productId) => {
     setFormData((prev) => ({ ...prev, productId }));
     setIsProductIdFromQR(true);
+    toast.success("¡Código QR escaneado con éxito!"); // Success toast
+  };
+
+  const handleError = () => {
+    toast.error(
+      "¡Error al escanear el código QR. ¡Por favor, inténtalo de nuevo!"
+    ); // Error toast
   };
 
   const handleSubmit = async (e) => {
@@ -148,7 +155,11 @@ const AddProductPage = () => {
                   </button>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <QRScanner id={Boolean(id)} onScan={handleScan} />
+                  <QRScanner
+                    id={Boolean(id)}
+                    onScan={handleScan}
+                    onError={handleError}
+                  />
                   {[
                     {
                       label: "Número de producto",

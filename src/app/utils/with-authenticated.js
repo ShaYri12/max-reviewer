@@ -14,9 +14,9 @@ const isJWT = (token) => {
     const payload = JSON.parse(atob(parts[1]));
 
     // Optional: Check for token expiry
-    if (payload.exp && Date.now() >= payload.exp * 1000) {
-      return false; // Token has expired
-    }
+    // if (payload.exp && Date.now() >= payload.exp * 1000) {
+    //   return false; // Token has expired
+    // }
 
     return typeof payload === "object";
   } catch (error) {
@@ -31,8 +31,10 @@ const withAuth = (WrappedComponent) => {
 
     useEffect(() => {
       const token = localStorage.getItem("token");
+      console.log(token);
 
       if (!isJWT(token)) {
+        console.log("object");
         router.replace("/login");
       } else {
         setIsLoading(false);

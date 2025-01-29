@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const router = useRouter();
@@ -20,6 +21,13 @@ const Sidebar = ({ isOpen, onClose }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     router.push("/signup");
+  };
+
+  const handlePlansClick = (e) => {
+    e.preventDefault();
+    toast("Aún no implementado.", {
+      icon: "ℹ️",
+    });
   };
 
   return (
@@ -83,6 +91,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <Link
           href="#"
           className="flex items-center gap-3 px-4 py-3 text-white hover:bg-[#2C4A72] transition-colors"
+          onClick={handlePlansClick}
         >
           <img
             src="/tag.svg"
