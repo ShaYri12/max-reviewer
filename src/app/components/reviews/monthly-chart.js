@@ -57,7 +57,7 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
         backgroundColor: "white",
         pointBackgroundColor: "white",
         pointBorderColor: "#FFD700",
-        pointRadius: 6,
+        pointRadius: 4,
         pointHoverRadius: 6,
         pointBorderWidth: 2,
         pointHoverBorderWidth: 2,
@@ -73,7 +73,7 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
     layout: {
       padding: {
         top: 10,
-        bottom: 10,
+        bottom: 20,
         left: 10,
         right: 10,
       },
@@ -92,16 +92,19 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
         },
       },
       y: {
-        min: 0,
+        beginAtZero: false,
         ticks: {
-          callback: (value) => (Number.isInteger(value) ? value : ""),
+          callback: (value) => (value > -1 ? value.toFixed(0) : ""),
           font: {
             size: 10,
           },
-          color: "#6C7278",
+          color: (context) =>
+            context.tick.value > -1 ? "#6C7278" : "rgba(0,0,0,0)",
+          padding: 10,
         },
         grid: {
-          color: "#71C9EDD9",
+          color: (context) =>
+            context.tick.value > -1 ? "#71C9EDD9" : "rgba(0,0,0,0)",
           drawBorder: false,
         },
         border: {
@@ -137,22 +140,15 @@ export default function MonthlyChart({ initialData, onPeriodChange }) {
     const values = initialData.data.map((item) => item.value);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
-    const range = maxValue - minValue;
-    const padding = range * 0.1; // Add 10% padding
+    const range = Math.max(maxValue - minValue, 1);
+    const padding = Math.max(range * 0.2, 1);
 
     const desiredSteps = 5;
     const rawStepSize = (range + 2 * padding) / desiredSteps;
-    const stepSize = Math.ceil(rawStepSize);
+    const stepSize = Math.max(Math.ceil(rawStepSize), 1);
 
-    let adjustedMin = Math.floor(minValue - padding);
-    let adjustedMax = Math.ceil(maxValue + padding);
-
-    // Ensure min is not exactly 0 to avoid cut-off issue
-    if (minValue === 0) {
-      adjustedMin = -1;
-    } else {
-      adjustedMin = Math.max(0, adjustedMin);
-    }
+    const adjustedMin = -padding; // Allow negative values for padding
+    const adjustedMax = Math.ceil(maxValue + padding);
 
     options.scales.y.min = adjustedMin;
     options.scales.y.max =
