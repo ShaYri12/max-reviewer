@@ -201,7 +201,7 @@ const SignupForm = ({ userData, onSubmit }) => {
   };
 
   return (
-    <div className="h-dvh fixed w-full top-0 bg-[#17375F] overflow-y-hidden">
+    <div className="h-dvh  bg-[#17375F] overflow-y-hidden">
       {userData && (
         <div className="fixed top-0 w-full z-50">
           <Navbar />

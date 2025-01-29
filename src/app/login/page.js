@@ -24,6 +24,7 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
+    // Check localStorage for remembered credentials
     const rememberedEmail = localStorage.getItem("rememberedEmail");
     const rememberedPassword = localStorage.getItem("rememberedPassword");
     const isRemembered = localStorage.getItem("rememberMe") === "true";
@@ -104,7 +105,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="h-dvh bg-[#17375F] fixed w-full top-0 flex items-center justify-between px-6 overflow-hidden">
+    <div className="h-dvh bg-[#17375F] static flex items-center justify-between px-6 overflow-hidden">
       <div className="w-full max-w-md mx-auto h-full">
         <div className="flex flex-col items-center md:mb-8 mb-4">
           <div className="flex items-center gap-2 md:mb-3 px-6 pt-6 md:pb-6 pb-4">
