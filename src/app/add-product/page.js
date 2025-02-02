@@ -37,6 +37,14 @@ const AddProductPage = () => {
   const autocompleteRef = useRef(null);
 
   useEffect(() => {
+    setTimeout(() => {
+      if (autocompleteRef.current) {
+        autocompleteRef.current.focus();
+      }
+    }, 300);
+  }, []);
+
+  useEffect(() => {
     if (id) {
       if (id === "1") {
         const mockData = {
