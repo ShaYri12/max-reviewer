@@ -72,8 +72,10 @@ const Interface = () => {
 
   return (
     <div className="relative">
-      <div className="h-dvh bg-[#17375F] overflow-y-hidden">
-        <Navbar />
+      <div className="h-dvh fixed bg-[#17375F] w-full flex items-center justify-between px-6 overflow-hidden">
+        <div className="fixed top-0 left-0 w-full z-50">
+          <Navbar />
+        </div>
 
         <div className="bg-white top-[80px] fixed max-w-md mx-auto bottom-0 right-4 left-4 rounded-t-xl">
           <main className="px-4 py-6 h-full">
