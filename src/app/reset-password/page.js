@@ -99,74 +99,77 @@ const ResetPasswordForm = () => {
   };
 
   return (
-    <div className="h-dvh bg-[#17375F] overflow-y-hidden">
-      <Navbar />
-
-      <div className=" md:top-[80px] top-[100px] fixed max-w-md mx-auto bottom-0 right-4 left-4 rounded-t-xl">
-        <div className=" bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
-          <div className="w-full max-w-md h-full">
-            <div className="flex flex-col items-center md:mb-8 mb-4">
-              <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
-                Cambiar Contraseña
-              </h1>
-              <p className="text-white text-center text-sm">
-                Ingresa tu contraseña actual y una nueva contraseña para
-                actualizar el acceso a tu cuenta.
-              </p>
-            </div>
-            <div className="fixed inset-x-4 md:top-[200px] top-[230px] bottom-0">
-              <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
-                <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
-                  <form
-                    className="space-y-4"
-                    onSubmit={handleSubmit}
-                    noValidate
-                  >
-                    <PasswordField
-                      showPassword={showOldPassword}
-                      setShowPassword={setShowOldPassword}
-                      name="oldPassword"
-                      value={formData.oldPassword}
-                      onChange={handleChange}
-                      placeholder="Contraseña Actual"
-                    />
-                    <PasswordField
-                      showPassword={showPassword}
-                      setShowPassword={setShowPassword}
-                      name="newPassword"
-                      value={formData.newPassword}
-                      onChange={handleChange}
-                      placeholder="Nueva Contraseña"
-                    />
-                    <PasswordField
-                      showPassword={showConfirmPassword}
-                      setShowPassword={setShowConfirmPassword}
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Confirma Nueva Contraseña"
-                    />
-                    <button
-                      type="submit"
-                      className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+    <div className="relative">
+      <div className="h-dvh fixed bg-[#17375F] w-full flex items-center justify-between px-6 overflow-hidden">
+        <div className="fixed top-0 left-0 w-full z-50">
+          <Navbar />
+        </div>
+        <div className=" md:top-[80px] top-[100px] fixed max-w-md mx-auto bottom-0 right-4 left-4 rounded-t-xl">
+          <div className=" bg-[#17375F] flex items-center justify-center px-4 overflow-hidden">
+            <div className="w-full max-w-md h-full">
+              <div className="flex flex-col items-center md:mb-8 mb-4">
+                <h1 className="text-[#F18D19] text-2xl font-bold mb-2">
+                  Cambiar Contraseña
+                </h1>
+                <p className="text-white text-center text-sm">
+                  Ingresa tu contraseña actual y una nueva contraseña para
+                  actualizar el acceso a tu cuenta.
+                </p>
+              </div>
+              <div className="fixed inset-x-4 md:top-[200px] top-[230px] bottom-0">
+                <div className="relative h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
+                  <div className="bg-white rounded-t-3xl px-5 py-6 h-full overflow-y-auto">
+                    <form
+                      className="space-y-4"
+                      onSubmit={handleSubmit}
+                      noValidate
                     >
-                      Cambiar Contraseña
-                    </button>
-                  </form>
-                  <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
-                    <p className="text-gray-600">
-                      ¿Recuerdas tu contraseña?{" "}
-                      <Link
-                        href="/login"
-                        className="text-[#6DC1E6] font-bold inline-flex"
+                      <PasswordField
+                        showPassword={showOldPassword}
+                        setShowPassword={setShowOldPassword}
+                        name="oldPassword"
+                        value={formData.oldPassword}
+                        onChange={handleChange}
+                        placeholder="Contraseña Actual"
+                      />
+                      <PasswordField
+                        showPassword={showPassword}
+                        setShowPassword={setShowPassword}
+                        name="newPassword"
+                        value={formData.newPassword}
+                        onChange={handleChange}
+                        placeholder="Nueva Contraseña"
+                      />
+                      <PasswordField
+                        showPassword={showConfirmPassword}
+                        setShowPassword={setShowConfirmPassword}
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        placeholder="Confirma Nueva Contraseña"
+                      />
+                      <button
+                        type="submit"
+                        className="w-full bg-[#253368] text-white py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
                       >
-                        Inicia sesión
-                      </Link>
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <div className="mt-8 fixed bottom-4 md:static">
-                      <Footer />
+                        Cambiar Contraseña
+                      </button>
+                    </form>
+                    <div className="mt-6 flex items-center gap-2 justify-center text-center text-sm">
+                      <p className="text-gray-600">
+                        ¿Recuerdas tu contraseña?{" "}
+                        <Link
+                          href="/login"
+                          className="text-[#6DC1E6] font-bold inline-flex"
+                        >
+                          Inicia sesión
+                        </Link>
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="mt-8 fixed bottom-4 md:static">
+                        <Footer />
+                      </div>
                     </div>
                   </div>
                 </div>

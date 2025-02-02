@@ -25,7 +25,7 @@ const AddProductPage = () => {
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
   const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
-  const apiKey = "API key"; 
+  const apiKey = "API key";
 
   const [formData, setFormData] = useState({
     productId: "",
@@ -71,7 +71,7 @@ const AddProductPage = () => {
       const place = autocompleteRef.current.getPlace();
       setFormData((prev) => ({
         ...prev,
-        businessName: place.name || prev.businessName, 
+        businessName: place.name || prev.businessName,
       }));
     }
   };
@@ -79,13 +79,13 @@ const AddProductPage = () => {
   const handleScan = (productId) => {
     setFormData((prev) => ({ ...prev, productId }));
     setIsProductIdFromQR(true);
-    toast.success("¡Código QR escaneado con éxito!"); 
+    toast.success("¡Código QR escaneado con éxito!");
   };
 
   const handleError = () => {
     toast.error(
       "¡Error al escanear el código QR. ¡Por favor, inténtalo de nuevo!"
-    ); 
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -125,19 +125,21 @@ const AddProductPage = () => {
     setFormData((prev) => ({
       ...prev,
       businessName: selectedName,
-      profileLink: selectedName,  
+      profileLink: selectedName,
     }));
 
-    setIsBusinessNameSelected(true); 
+    setIsBusinessNameSelected(true);
   };
 
   const isGoogleApiLoaded = typeof window !== "undefined" && window.google;
 
-  return (
-    !isGoogleApiLoaded ? (
-      <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
-        <div className="h-dvh bg-[#17375F] overflow-y-hidden">
-          <Navbar />
+  return !isGoogleApiLoaded ? (
+    <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
+      <div className="relative">
+        <div className="h-dvh fixed bg-[#17375F] w-full flex items-center justify-between px-6 overflow-hidden">
+          <div className="fixed top-0 left-0 w-full z-50">
+            <Navbar />
+          </div>
           <div className="fixed inset-x-4 top-[80px] bottom-0">
             <div className="h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
               <main className="flex-1 overflow-auto p-6">
@@ -170,7 +172,7 @@ const AddProductPage = () => {
                       name: "businessName",
                       value: formData.businessName,
                       type: "text",
-                      autocomplete: true,  
+                      autocomplete: true,
                     },
                     {
                       label: "Link del perfil",
@@ -186,7 +188,7 @@ const AddProductPage = () => {
                           value={formData.businessName}
                           onChange={handleInputChange}
                           name="businessName"
-                          onPlaceSelect={handlePlaceSelect}  
+                          onPlaceSelect={handlePlaceSelect}
                           autocompleteRef={autocompleteRef}
                           disabled={isBusinessNameSelected}
                         />
@@ -202,7 +204,7 @@ const AddProductPage = () => {
                               (id || isProductIdFromQR)) ||
                             (isBusinessNameSelected &&
                               (name === "businessName" ||
-                                name === "profileLink")) 
+                                name === "profileLink"))
                           }
                         />
                       )}
@@ -229,10 +231,14 @@ const AddProductPage = () => {
             </div>
           </div>
         </div>
-      </LoadScript>
-    ) : (
-      <div className="h-dvh bg-[#17375F] overflow-y-hidden">
-        <Navbar />
+      </div>
+    </LoadScript>
+  ) : (
+    <div className="relative">
+      <div className="h-dvh fixed bg-[#17375F] w-full flex items-center justify-between px-6 overflow-hidden">
+        <div className="fixed top-0 left-0 w-full z-50">
+          <Navbar />
+        </div>
         <div className="fixed inset-x-4 top-[80px] bottom-0">
           <div className="h-full bg-white max-w-md mx-auto rounded-t-xl flex flex-col">
             <main className="flex-1 overflow-auto p-6">
@@ -261,7 +267,7 @@ const AddProductPage = () => {
                     name: "businessName",
                     value: formData.businessName,
                     type: "text",
-                    autocomplete: true,  
+                    autocomplete: true,
                   },
                   {
                     label: "Link del perfil",
@@ -277,7 +283,7 @@ const AddProductPage = () => {
                         value={formData.businessName}
                         onChange={handleInputChange}
                         name="businessName"
-                        onPlaceSelect={handlePlaceSelect} 
+                        onPlaceSelect={handlePlaceSelect}
                         autocompleteRef={autocompleteRef}
                         disabled={isBusinessNameSelected}
                       />
@@ -291,7 +297,7 @@ const AddProductPage = () => {
                         disabled={
                           (name === "productId" && (id || isProductIdFromQR)) ||
                           (isBusinessNameSelected &&
-                            (name === "businessName" || name === "profileLink"))  
+                            (name === "businessName" || name === "profileLink"))
                         }
                       />
                     )}
@@ -318,7 +324,7 @@ const AddProductPage = () => {
           </div>
         </div>
       </div>
-    )
+    </div>
   );
 };
 
