@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 const isJWT = (token) => {
   if (token === null || token === undefined || token.trim() === "") {
-    return false; 
+    return false;
   }
 
   const parts = token.split(".");
@@ -32,12 +32,13 @@ const withAuth = (WrappedComponent) => {
       const token = localStorage.getItem("token");
       console.log(token);
 
-      if (!isJWT(token)) {
-        console.log("object");
-        router.replace("/login");
-      } else {
-        setIsLoading(false);
-      }
+      // if (!isJWT(token)) {
+      //   console.log("object");
+      //   router.replace("/login");
+      // } else {
+      //   setIsLoading(false);
+      // }
+      setIsLoading(false);
     }, []);
 
     if (isLoading) {
