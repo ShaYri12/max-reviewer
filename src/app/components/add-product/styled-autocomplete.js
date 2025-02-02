@@ -28,10 +28,9 @@ const StyledAutocomplete = ({
         inputRef.current.blur();
       }
     };
-
-    window.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
