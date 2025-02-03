@@ -25,7 +25,7 @@ const AddProductPage = () => {
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
   const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
-  const apiKey = "API key";
+  const apiKey = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo";
 
   const [formData, setFormData] = useState({
     productId: "",
