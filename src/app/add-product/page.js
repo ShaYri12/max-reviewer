@@ -8,7 +8,7 @@ import withAuth from "../utils/with-authenticated";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
-import { LoadScript, Autocomplete } from "@react-google-maps/api";
+import { LoadScript } from "@react-google-maps/api";
 import StyledAutocomplete from "../components/add-product/styled-autocomplete";
 
 const platforms = [
@@ -18,7 +18,7 @@ const platforms = [
 ];
 
 const libraries = ["places"];
-const GOOGLE_MAPS_API_KEY = "API KEY HERE";
+const GOOGLE_MAPS_API_KEY = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo";
 
 const AddProductPage = () => {
   const router = useRouter();
