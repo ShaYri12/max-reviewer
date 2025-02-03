@@ -45,6 +45,23 @@ const StyledAutocomplete = ({
     setError("Failed to load Google Maps API. Please try again later.");
   };
 
+  // iOS में touch events को बेहतर handle करने के लिए नया function
+  const handleFocus = (e) => {
+    // Prevent zoom on iOS
+    const viewportMeta = document.querySelector('meta[name=viewport]');
+    if (!viewportMeta) {
+      const meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, initial-scale=1, maximum-scale=1';
+      document.head.appendChild(meta);
+    } else {
+      viewportMeta.content = 'width=device-width, initial-scale=1, maximum-scale=1';
+    }
+    
+    // Force input to receive focus
+    e.target.focus();
+  };
+
   if (!isLoaded || error) {
     return (
       <div className="space-y-2">
@@ -87,9 +104,15 @@ const StyledAutocomplete = ({
           name={name}
           value={value}
           onChange={onChange}
+          onFocus={handleFocus}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
+          style={{
+            '-webkit-appearance': 'none',
+            '-webkit-border-radius': '8px',
+            'font-size': '16px', // Prevents iOS zoom
+          }}
         />
       </Autocomplete>
       <style jsx global>{`
