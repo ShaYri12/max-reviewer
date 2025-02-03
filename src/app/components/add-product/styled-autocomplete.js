@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Autocomplete } from "@react-google-maps/api";
+import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
+
+const libraries = ["places"];
 
 const StyledAutocomplete = ({
   value,
@@ -10,8 +12,12 @@ const StyledAutocomplete = ({
   disabled,
 }) => {
   const inputRef = useRef(null);
-  const [isLoaded, setIsLoaded] = useState(true);
   const [error, setError] = useState(null);
+
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -24,7 +30,8 @@ const StyledAutocomplete = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerWidth < 768) return; // Ignore blur on small screens
+      // Only blur on desktop devices and ignore mobile/touch devices
+      if ("ontouchstart" in window || window.innerWidth < 768) return;
       inputRef.current?.blur();
     };
 
@@ -36,16 +43,14 @@ const StyledAutocomplete = ({
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
-    setIsLoaded(true);
     setError(null);
   };
 
   const handleError = () => {
-    setIsLoaded(false);
     setError("Failed to load Google Maps API. Please try again later.");
   };
 
-  if (!isLoaded || error) {
+  if (loadError) {
     return (
       <div className="space-y-2">
         <input
@@ -57,16 +62,31 @@ const StyledAutocomplete = ({
           placeholder="Enter a location"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
-            <strong className="font-bold">Error!</strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
+          <strong className="font-bold">Error!</strong>
+          <span className="block sm:inline">
+            {" "}
+            Failed to load Google Maps API
+          </span>
+        </div>
       </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <input
+        type="text"
+        name={name}
+        value={value}
+        onChange={onChange}
+        disabled={true}
+        placeholder="Loading..."
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
     );
   }
 
