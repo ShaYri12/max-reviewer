@@ -144,7 +144,7 @@ const AddProductPage = () => {
   return !isGoogleApiLoaded ? (
     <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
       <div className="relative">
-        <div className="h-dvh fixed bg-[#17375F] w-full flex items-center justify-between px-6 overflow-hidden">
+        <div className="h-dvh bg-[#17375F] w-full flex items-center justify-between px-6 overflow-hidden">
           <div className="fixed top-0 left-0 w-full z-50">
             <Navbar />
           </div>
