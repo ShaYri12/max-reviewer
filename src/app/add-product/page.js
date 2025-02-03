@@ -18,7 +18,7 @@ const platforms = [
 ];
 
 const libraries = ["places"];
-const GOOGLE_MAPS_API_KEY = "AIzaSyCaeJxpiKN3NSoi-B8MR6RidOgA0yteFlo";
+const GOOGLE_MAPS_API_KEY = "API KEY HERE";
 
 const AddProductPage = () => {
   const router = useRouter();
