@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
-
-const libraries = ["places"];
+import { Autocomplete } from "@react-google-maps/api";
 
 const StyledAutocomplete = ({
   value,
@@ -14,11 +12,6 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
 
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    libraries,
-  });
-
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
@@ -30,7 +23,6 @@ const StyledAutocomplete = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      // Only blur on desktop devices and ignore mobile/touch devices
       if ("ontouchstart" in window || window.innerWidth < 768) return;
       inputRef.current?.blur();
     };
@@ -50,7 +42,7 @@ const StyledAutocomplete = ({
     setError("Failed to load Google Maps API. Please try again later.");
   };
 
-  if (loadError) {
+  if (error) {
     return (
       <div className="space-y-2">
         <input
@@ -67,26 +59,9 @@ const StyledAutocomplete = ({
           role="alert"
         >
           <strong className="font-bold">Error!</strong>
-          <span className="block sm:inline">
-            {" "}
-            Failed to load Google Maps API
-          </span>
+          <span className="block sm:inline"> {error}</span>
         </div>
       </div>
-    );
-  }
-
-  if (!isLoaded) {
-    return (
-      <input
-        type="text"
-        name={name}
-        value={value}
-        onChange={onChange}
-        disabled={true}
-        placeholder="Loading..."
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      />
     );
   }
 
