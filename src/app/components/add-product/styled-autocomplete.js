@@ -24,7 +24,7 @@ const StyledAutocomplete = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerWidth < 768) return; // Ignore blur on small screens
+      if (window.innerWidth < 768) return;
       inputRef.current?.blur();
     };
 
