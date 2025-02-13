@@ -11,6 +11,7 @@ const StyledAutocomplete = ({
 }) => {
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
+  const containerRef = useRef(null);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -22,14 +23,30 @@ const StyledAutocomplete = ({
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      if ("ontouchstart" in window || window.innerWidth < 768) return;
+    const handleClickOutside = (event) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        inputRef.current?.blur();
+      }
+    };
+
+    const handleScrollOrWheel = () => {
+      if (autocompleteRef.current) {
+        autocompleteRef.current.setTypes([]); // Close the dropdown
+      }
       inputRef.current?.blur();
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("click", handleClickOutside);
+    window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
+    window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
+
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("scroll", handleScrollOrWheel);
+      window.removeEventListener("wheel", handleScrollOrWheel);
     };
   }, []);
 
@@ -66,7 +83,7 @@ const StyledAutocomplete = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <Autocomplete
         onLoad={handleLoad}
         onError={handleError}
