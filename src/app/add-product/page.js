@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "../components/shared/navbar";
 import QRScanner from "../components/add-product/qr-scanner";
 import PlatformSelector from "../components/shared/platform-selector";
+import withAuth from "../utils/with-authenticated";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -255,4 +256,4 @@ const AddProductPage = () => {
   );
 };
 
-export default AddProductPage;
+export default withAuth(AddProductPage);
