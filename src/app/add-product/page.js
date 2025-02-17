@@ -256,4 +256,4 @@ const AddProductPage = () => {
   );
 };
 
-export default withAuth(AddProductPage);
+export default AddProductPage;
