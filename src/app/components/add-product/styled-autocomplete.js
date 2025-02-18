@@ -141,8 +141,12 @@ const StyledAutocomplete = ({
         }
 
         .pac-icon {
-          display: none;
+          display: hidden;
         }
+
+        .pac-item:focus {
+    @apply bg-primary/10 outline-none;
+  }
 
         .pac-item-selected {
           background-color: #f3f9fb;
