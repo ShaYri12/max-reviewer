@@ -43,12 +43,18 @@ const StyledAutocomplete = ({
     window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
     window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
 
+    // Focus the input element after a short delay
+    const timer = setTimeout(() => {
+      inputRef.current?.focus()
+    }, 100)
+
     return () => {
-      document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScrollOrWheel);
-      window.removeEventListener("wheel", handleScrollOrWheel);
-    };
-  }, []);
+      document.removeEventListener("click", handleClickOutside)
+      window.removeEventListener("scroll", handleScrollOrWheel)
+      window.removeEventListener("wheel", handleScrollOrWheel)
+      clearTimeout(timer)
+    }
+  }, [autocompleteRef.current])
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;

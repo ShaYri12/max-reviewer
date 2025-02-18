@@ -22,6 +22,7 @@ const GOOGLE_MAPS_API_KEY = "API KEY HERE";
 
 const AddProductPage = () => {
   const router = useRouter();
+  
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
@@ -34,16 +35,31 @@ const AddProductPage = () => {
     platform: platforms[0].value,
     profileLink: "",
   });
-
-  const autocompleteRef = useRef(null);
+  
+  const autocompleteRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    setTimeout(() => {
-      if (autocompleteRef.current) {
-        autocompleteRef.current.focus();
-      }
-    }, 300);
-  }, []);
+    const script = document.createElement("script")
+    script.async = true
+    script.onload = () => setIsScriptLoaded(true)
+    document.body.appendChild(script)
+
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isScriptLoaded) {
+      const timer = setTimeout(() => {
+        if (autocompleteRef.current) {
+          autocompleteRef.current.focus()
+        }
+      }, 300)
+
+      return () => clearTimeout(timer)
+    }
+  }, [isScriptLoaded])
 
   useEffect(() => {
     if (id) {
