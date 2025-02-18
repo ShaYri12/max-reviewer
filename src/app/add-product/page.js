@@ -1,12 +1,12 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../components/shared/navbar";
 import QRScanner from "../components/add-product/qr-scanner";
 import PlatformSelector from "../components/shared/platform-selector";
 import withAuth from "../utils/with-authenticated";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { LoadScript } from "@react-google-maps/api";
 import StyledAutocomplete from "../components/add-product/styled-autocomplete";
@@ -22,9 +22,9 @@ const GOOGLE_MAPS_API_KEY = "API KEY HERE";
 
 const AddProductPage = () => {
   const router = useRouter();
-  
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+
   const [isProductIdFromQR, setIsProductIdFromQR] = useState(false);
   const [isBusinessNameSelected, setIsBusinessNameSelected] = useState(false);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
@@ -35,31 +35,33 @@ const AddProductPage = () => {
     platform: platforms[0].value,
     profileLink: "",
   });
-  
-  const autocompleteRef = useRef<HTMLInputElement>(null)
 
+  // FIX: Initialize ref as an object (plain JS syntax)
+  const autocompleteRef = useRef(null);
+
+  // (Optional) Manual script loading if needed. Note: LoadScript already loads the API.
   useEffect(() => {
-    const script = document.createElement("script")
-    script.async = true
-    script.onload = () => setIsScriptLoaded(true)
-    document.body.appendChild(script)
+    const script = document.createElement("script");
+    script.async = true;
+    script.onload = () => setIsScriptLoaded(true);
+    document.body.appendChild(script);
 
     return () => {
-      document.body.removeChild(script)
-    }
-  }, [])
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     if (isScriptLoaded) {
       const timer = setTimeout(() => {
         if (autocompleteRef.current) {
-          autocompleteRef.current.focus()
+          // Optionally focus the autocomplete input
+          autocompleteRef.current.focus();
         }
-      }, 300)
-
-      return () => clearTimeout(timer)
+      }, 300);
+      return () => clearTimeout(timer);
     }
-  }, [isScriptLoaded])
+  }, [isScriptLoaded]);
 
   useEffect(() => {
     if (id) {
@@ -108,9 +110,7 @@ const AddProductPage = () => {
   };
 
   const handleError = () => {
-    toast.error(
-      "¡Error al escanear el código QR. ¡Por favor, inténtalo de nuevo!"
-    );
+    toast.error("¡Error al escanear el código QR. ¡Por favor, inténtalo de nuevo!");
   };
 
   const handleSubmit = async (e) => {
@@ -132,15 +132,11 @@ const AddProductPage = () => {
         );
         router.push("/reviews");
       } else {
-        toast.error(
-          "No se pudo actualizar el producto. Por favor, inténtalo de nuevo."
-        );
+        toast.error("No se pudo actualizar el producto. Por favor, inténtalo de nuevo.");
       }
     } catch (error) {
       console.error("Error al guardar el producto:", error);
-      toast.error(
-        "No se pudo guardar el producto. Por favor, inténtalo de nuevo."
-      );
+      toast.error("No se pudo guardar el producto. Por favor, inténtalo de nuevo.");
     }
   };
 
@@ -178,19 +174,12 @@ const AddProductPage = () => {
                   <h2 className="text-lg text-[#6C7278] font-semibold">
                     {id ? "Editar Producto" : "Configura tu Producto"}
                   </h2>
-                  <button
-                    onClick={() => router.back()}
-                    className="text-[#6DC1E6]"
-                  >
+                  <button onClick={() => router.back()} className="text-[#6DC1E6]">
                     <img src="/close.svg" alt="Close" width={20} height={20} />
                   </button>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <QRScanner
-                    id={Boolean(id)}
-                    onScan={handleScan}
-                    onError={handleError}
-                  />
+                  <QRScanner id={Boolean(id)} onScan={handleScan} onError={handleError} />
                   {[
                     {
                       label: "Número de producto",
@@ -231,11 +220,9 @@ const AddProductPage = () => {
                           onChange={handleInputChange}
                           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
                           disabled={
-                            (name === "productId" &&
-                              (id || isProductIdFromQR)) ||
+                            (name === "productId" && (id || isProductIdFromQR)) ||
                             (isBusinessNameSelected &&
-                              (name === "businessName" ||
-                                name === "profileLink"))
+                              (name === "businessName" || name === "profileLink"))
                           }
                           placeholder={
                             autocomplete && !isScriptLoaded
