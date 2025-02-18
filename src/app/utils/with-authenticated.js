@@ -32,12 +32,12 @@ const withAuth = (WrappedComponent) => {
       const token = localStorage.getItem("token");
       console.log(token);
 
-      // if (!isJWT(token)) {
-      //   console.log("object");
-      //   router.replace("/login");
-      // } else {
-      //   setIsLoading(false);
-      // }
+      if (!isJWT(token)) {
+        console.log("object");
+        router.replace("/login");
+      } else {
+        setIsLoading(false);
+      }
       setIsLoading(false);
     }, []);
 
