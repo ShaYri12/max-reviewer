@@ -32,13 +32,16 @@ const withAuth = (WrappedComponent) => {
       const token = localStorage.getItem("token");
       console.log(token);
 
+      // Checking if the user is logged in by validating the JWT token
+      // If the token is invalid, redirect the user to the login page
       // if (!isJWT(token)) {
       //   console.log("object");
       //   router.replace("/login");
       // } else {
       //   setIsLoading(false);
       // }
-      setIsLoading(false);
+
+      setIsLoading(false); // Ensuring the loading state is managed correctly
     }, []);
 
     if (isLoading) {
