@@ -36,10 +36,8 @@ const AddProductPage = () => {
     profileLink: "",
   });
 
-  // FIX: Initialize ref as an object (plain JS syntax)
   const autocompleteRef = useRef(null);
 
-  // (Optional) Manual script loading if needed. Note: LoadScript already loads the API.
   useEffect(() => {
     const script = document.createElement("script");
     script.async = true;
@@ -55,7 +53,6 @@ const AddProductPage = () => {
     if (isScriptLoaded) {
       const timer = setTimeout(() => {
         if (autocompleteRef.current) {
-          // Optionally focus the autocomplete input
           autocompleteRef.current.focus();
         }
       }, 300);

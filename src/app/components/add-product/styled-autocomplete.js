@@ -30,14 +30,12 @@ const StyledAutocomplete = ({
         containerRef.current &&
         !containerRef.current.contains(event.target)
       ) {
-        // Only blur if it's not the input itself (Fix for iOS)
         if (event.target !== inputRef.current) {
           inputRef.current?.blur();
         }
       }
     };
 
-    // Attach event listeners
     document.addEventListener("click", handleClickOutside);
 
     return () => {
@@ -57,9 +55,9 @@ const StyledAutocomplete = ({
   };
 
   const handleInputTouch = (event) => {
-    event.stopPropagation(); // Prevent Safari from closing the input
+    event.stopPropagation();
     setTimeout(() => {
-      inputRef.current?.focus(); // Delay to ensure iOS registers it
+      inputRef.current?.focus();
     }, 100);
   };
 
@@ -90,7 +88,7 @@ const StyledAutocomplete = ({
     <div
       className="relative"
       ref={containerRef}
-      onTouchEnd={handleInputTouch} // 🔹 Fix for Safari touch behavior
+      onTouchEnd={handleInputTouch}
     >
       <Autocomplete
         onLoad={handleLoad}
