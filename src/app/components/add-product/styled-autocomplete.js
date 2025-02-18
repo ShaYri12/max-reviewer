@@ -26,34 +26,24 @@ const StyledAutocomplete = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        inputRef.current?.blur();
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        // Only blur if it's not the input itself (Fix for iOS)
+        if (event.target !== inputRef.current) {
+          inputRef.current?.blur();
+        }
       }
     };
 
-    const handleScrollOrWheel = () => {
-      if (autocompleteRef.current) {
-        autocompleteRef.current.setTypes([]);
-      }
-      inputRef.current?.blur();
-    };
-
+    // Attach event listeners
     document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
-    window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
-
-    // For non-iOS devices, attempt auto-focus after a short delay.
-    const timer = setTimeout(() => {
-      inputRef.current?.focus();
-    }, 10000);
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScrollOrWheel);
-      window.removeEventListener("wheel", handleScrollOrWheel);
-      clearTimeout(timer);
     };
-  }, [autocompleteRef]);
+  }, []);
 
   const handleLoad = (autocomplete) => {
     if (autocompleteRef && typeof autocompleteRef === "object") {
@@ -64,6 +54,13 @@ const StyledAutocomplete = ({
 
   const handleError = () => {
     setError("Failed to load Google Maps API. Please try again later.");
+  };
+
+  const handleInputTouch = (event) => {
+    event.stopPropagation(); // Prevent Safari from closing the input
+    setTimeout(() => {
+      inputRef.current?.focus(); // Delay to ensure iOS registers it
+    }, 100);
   };
 
   if (error) {
@@ -90,12 +87,10 @@ const StyledAutocomplete = ({
   }
 
   return (
-    // onTouchStart ensures that when a user taps anywhere in the container,
-    // the input is focused on iOS.
     <div
       className="relative"
       ref={containerRef}
-      onTouchStart={() => inputRef.current?.focus()}
+      onTouchEnd={handleInputTouch} // 🔹 Fix for Safari touch behavior
     >
       <Autocomplete
         onLoad={handleLoad}
@@ -108,7 +103,6 @@ const StyledAutocomplete = ({
       >
         <input
           ref={inputRef}
-          autoFocus
           type="text"
           name={name}
           value={value}
