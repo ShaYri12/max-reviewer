@@ -42,7 +42,7 @@ const StyledAutocomplete = ({
     window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
     window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
 
-    // Focus the input element after a short delay
+    // For non-iOS devices, attempt auto-focus after a short delay.
     const timer = setTimeout(() => {
       inputRef.current?.focus();
     }, 100);
@@ -90,7 +90,13 @@ const StyledAutocomplete = ({
   }
 
   return (
-    <div className="relative" ref={containerRef}>
+    // onTouchStart ensures that when a user taps anywhere in the container,
+    // the input is focused on iOS.
+    <div
+      className="relative"
+      ref={containerRef}
+      onTouchStart={() => inputRef.current?.focus()}
+    >
       <Autocomplete
         onLoad={handleLoad}
         onError={handleError}
@@ -102,6 +108,7 @@ const StyledAutocomplete = ({
       >
         <input
           ref={inputRef}
+          autoFocus
           type="text"
           name={name}
           value={value}
