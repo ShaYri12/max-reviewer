@@ -58,7 +58,7 @@ const AddProductPage = () => {
           // Optionally focus the autocomplete input
           autocompleteRef.current.focus();
         }
-      }, 300);
+      }, 30000);
       return () => clearTimeout(timer);
     }
   }, [isScriptLoaded]);
