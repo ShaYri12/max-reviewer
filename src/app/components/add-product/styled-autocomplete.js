@@ -45,7 +45,7 @@ const StyledAutocomplete = ({
     // For non-iOS devices, attempt auto-focus after a short delay.
     const timer = setTimeout(() => {
       inputRef.current?.focus();
-    }, 100);
+    }, 10000);
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
