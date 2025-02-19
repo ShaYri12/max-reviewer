@@ -14,8 +14,7 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAndroidChrome, setIsAndroidChrome] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -24,21 +23,19 @@ const StyledAutocomplete = ({
         onPlaceSelect(place);
       }
     }
-    setIsDropdownOpen(false);
   };
 
   const closeDropdown = useCallback(() => {
-    if (autocompleteRef.current && isDropdownOpen) {
-      autocompleteRef.current.setTypes([]);
-      setIsDropdownOpen(false);
+    if (autocompleteRef.current) {
+      autocompleteRef.current.setTypes([]); // Close the dropdown
     }
-  }, [isDropdownOpen, autocompleteRef]);
+    inputRef.current?.blur();
+  }, [autocompleteRef]);
 
   useEffect(() => {
-    setIsMobile(
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      )
+    setIsAndroidChrome(
+      /Android/i.test(navigator.userAgent) &&
+        /Chrome/i.test(navigator.userAgent)
     );
 
     const handleClickOutside = (event) => {
@@ -50,34 +47,35 @@ const StyledAutocomplete = ({
       }
     };
 
-    const handleScroll = (event) => {
-      if (isMobile && isDropdownOpen) {
-        const inputRect = inputRef.current.getBoundingClientRect();
-        const isVisible =
-          inputRect.top >= 0 &&
-          inputRect.left >= 0 &&
-          inputRect.bottom <=
-            (window.innerHeight || document.documentElement.clientHeight) &&
-          inputRect.right <=
-            (window.innerWidth || document.documentElement.clientWidth);
-        if (!isVisible) {
-          closeDropdown();
-        }
-      } else if (!isMobile && !containerRef.current.contains(event.target)) {
+    const handleScrollOrWheel = () => {
+      closeDropdown();
+    };
+
+    const handleTouchMove = (e) => {
+      if (isAndroidChrome) {
         closeDropdown();
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("touchmove", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
+    window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
+
+    if (isAndroidChrome) {
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+    }
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("touchmove", handleScroll);
+      window.removeEventListener("scroll", handleScrollOrWheel);
+      window.removeEventListener("wheel", handleScrollOrWheel);
+      if (isAndroidChrome) {
+        document.removeEventListener("touchmove", handleTouchMove);
+      }
     };
-  }, [closeDropdown, isMobile, isDropdownOpen]);
+  }, [closeDropdown, isAndroidChrome]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -89,15 +87,10 @@ const StyledAutocomplete = ({
   };
 
   const handleInputFocus = () => {
-    setIsDropdownOpen(true);
-  };
-
-  const handleInputBlur = () => {
-    // Delay closing the dropdown to allow for item selection
-    setTimeout(() => {
-      if (!isDropdownOpen) return;
-      closeDropdown();
-    }, 150);
+    // Ensure the dropdown is open when the input is focused
+    if (autocompleteRef.current) {
+      autocompleteRef.current.setTypes(["establishment"]);
+    }
   };
 
   if (error) {
@@ -141,7 +134,6 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
