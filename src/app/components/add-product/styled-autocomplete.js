@@ -192,23 +192,25 @@ const StyledAutocomplete = ({
     const ensureFocus = () => {
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 100);
+      }, 200);
     };
 
-    inputRef.current?.addEventListener("touchstart", ensureFocus);
-    inputRef.current?.addEventListener("click", ensureFocus);
+    inputRef.current?.addEventListener("touchend", ensureFocus);
 
     return () => {
-      inputRef.current?.removeEventListener("touchstart", ensureFocus);
-      inputRef.current?.removeEventListener("click", ensureFocus);
+      inputRef.current?.removeEventListener("touchend", ensureFocus);
     };
   }, []);
 
-  // Hides autocomplete suggestions when scrolling
+  // Hide autocomplete suggestions on scroll
   useEffect(() => {
     const hideSuggestionsOnScroll = () => {
       if (autocompleteInstance.current) {
-        autocompleteInstance.current.set("place", null); // Reset autocomplete
+        const input = inputRef.current;
+        if (input) {
+          input.blur(); // Hide keyboard & suggestions
+          setTimeout(() => input.focus(), 300); // Re-focus after a short delay
+        }
       }
     };
 
