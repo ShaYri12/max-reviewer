@@ -14,7 +14,7 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isAndroid, setIsAndroid] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handlePlaceChanged = () => {
@@ -32,10 +32,14 @@ const StyledAutocomplete = ({
       autocompleteRef.current.setTypes([]);
       setIsDropdownOpen(false);
     }
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, autocompleteRef]);
 
   useEffect(() => {
-    setIsAndroid(/Android/i.test(navigator.userAgent));
+    setIsMobile(
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    );
 
     const handleClickOutside = (event) => {
       if (
@@ -47,26 +51,33 @@ const StyledAutocomplete = ({
     };
 
     const handleScroll = (event) => {
-      if (!containerRef.current.contains(event.target)) {
+      if (isMobile && isDropdownOpen) {
+        const inputRect = inputRef.current.getBoundingClientRect();
+        const isVisible =
+          inputRect.top >= 0 &&
+          inputRect.left >= 0 &&
+          inputRect.bottom <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+          inputRect.right <=
+            (window.innerWidth || document.documentElement.clientWidth);
+        if (!isVisible) {
+          closeDropdown();
+        }
+      } else if (!isMobile && !containerRef.current.contains(event.target)) {
         closeDropdown();
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    document.addEventListener("scroll", handleScroll, {
-      capture: true,
-      passive: true,
-    });
-    window.addEventListener("wheel", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("touchmove", handleScroll, { passive: true });
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      document.removeEventListener("scroll", handleScroll, { capture: true });
-      window.removeEventListener("wheel", handleScroll);
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchmove", handleScroll);
     };
-  }, [closeDropdown]);
+  }, [closeDropdown, isMobile, isDropdownOpen]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -79,21 +90,14 @@ const StyledAutocomplete = ({
 
   const handleInputFocus = () => {
     setIsDropdownOpen(true);
-    if (isAndroid) {
-      setTimeout(() => {
-        inputRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 100);
-    }
   };
 
-  const handleTouchStart = (e) => {
-    if (isAndroid) {
-      e.preventDefault();
-      inputRef.current?.focus();
-    }
+  const handleInputBlur = () => {
+    // Delay closing the dropdown to allow for item selection
+    setTimeout(() => {
+      if (!isDropdownOpen) return;
+      closeDropdown();
+    }, 150);
   };
 
   if (error) {
@@ -137,7 +141,7 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
-          onTouchStart={handleTouchStart}
+          onBlur={handleInputBlur}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
