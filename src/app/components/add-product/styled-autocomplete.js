@@ -41,18 +41,20 @@ const StyledAutocomplete = ({
     const handleClickOutside = (event) => {
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target)
+        !containerRef.current.contains(event.target) &&
+        event.target !== inputRef.current
       ) {
         closeDropdown();
       }
     };
 
     const handleScrollOrWheel = () => {
+      if (document.activeElement === inputRef.current) return; // Prevents closing on scroll when input is focused
       closeDropdown();
     };
 
     const handleTouchMove = (e) => {
-      if (isAndroidChrome) {
+      if (isAndroidChrome && document.activeElement !== inputRef.current) {
         closeDropdown();
       }
     };
