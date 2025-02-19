@@ -119,7 +119,54 @@ const StyledAutocomplete = ({
         />
       </Autocomplete>
       <style jsx global>{`
-        /* ... (styles remain unchanged) ... */
+        .pac-container {
+          border-radius: 0.5rem;
+          margin-top: 4px;
+          border: 1px solid #71c9ed;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+          background-color: white;
+          font-family: inherit;
+        }
+
+        .pac-item {
+          padding: 0.75rem 1rem;
+          cursor: pointer;
+          font-family: inherit;
+          border-top: 1px solid #e5e7eb;
+        }
+
+        .pac-item:first-child {
+          border-top: none;
+        }
+
+        .pac-item:hover {
+          background-color: #f3f9fb;
+        }
+
+        .pac-item-query {
+          font-size: 0.875rem;
+          color: #17375f;
+          font-weight: 500;
+        }
+
+        .pac-matched {
+          color: #17375f;
+          font-weight: 600;
+        }
+
+        .pac-icon {
+          display: none;
+        }
+
+        .pac-item-selected {
+          background-color: #f3f9fb;
+        }
+
+        .pac-description {
+          font-size: 0.75rem;
+          color: #6c7278;
+          margin-top: 0.25rem;
+        }
       `}</style>
     </div>
   );
