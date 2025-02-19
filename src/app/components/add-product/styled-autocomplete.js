@@ -202,15 +202,26 @@ const StyledAutocomplete = ({
     };
   }, []);
 
-  // Hide autocomplete suggestions on scroll
+  // Modified scroll behavior to only hide suggestions without affecting keyboard
   useEffect(() => {
+    let scrollTimeout;
     const hideSuggestionsOnScroll = () => {
       if (autocompleteInstance.current) {
-        const input = inputRef.current;
-        if (input) {
-          input.blur(); // Hide keyboard & suggestions
-          setTimeout(() => input.focus(), 300); // Re-focus after a short delay
+        // Clear any existing timeout
+        clearTimeout(scrollTimeout);
+
+        // Get the current place predictions panel
+        const predictionsPanel = document.querySelector(".pac-container");
+        if (predictionsPanel) {
+          predictionsPanel.style.display = "none";
         }
+
+        // Show predictions panel again after scroll stops
+        scrollTimeout = setTimeout(() => {
+          if (predictionsPanel) {
+            predictionsPanel.style.display = "block";
+          }
+        }, 100);
       }
     };
 
@@ -218,6 +229,7 @@ const StyledAutocomplete = ({
 
     return () => {
       window.removeEventListener("scroll", hideSuggestionsOnScroll);
+      clearTimeout(scrollTimeout);
     };
   }, []);
 
