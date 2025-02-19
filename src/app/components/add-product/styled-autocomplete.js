@@ -15,6 +15,7 @@ const StyledAutocomplete = ({
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
   const [isAndroidChrome, setIsAndroidChrome] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -29,14 +30,17 @@ const StyledAutocomplete = ({
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes([]); // Close the dropdown
     }
-    inputRef.current?.blur();
-  }, [autocompleteRef]);
+    if (!isIOS) {
+      inputRef.current?.blur();
+    }
+  }, [isIOS, autocompleteRef]);
 
   useEffect(() => {
     setIsAndroidChrome(
       /Android/i.test(navigator.userAgent) &&
         /Chrome/i.test(navigator.userAgent)
     );
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
 
     const handleClickOutside = (event) => {
       if (
@@ -48,7 +52,9 @@ const StyledAutocomplete = ({
     };
 
     const handleScrollOrWheel = () => {
-      closeDropdown();
+      if (!isIOS) {
+        closeDropdown();
+      }
     };
 
     const handleTouchMove = (e) => {
@@ -75,7 +81,7 @@ const StyledAutocomplete = ({
         document.removeEventListener("touchmove", handleTouchMove);
       }
     };
-  }, [closeDropdown, isAndroidChrome]);
+  }, [closeDropdown, isAndroidChrome, isIOS]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -90,6 +96,18 @@ const StyledAutocomplete = ({
     // Ensure the dropdown is open when the input is focused
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes(["establishment"]);
+    }
+    if (isIOS) {
+      // Force the virtual keyboard to show on iOS
+      inputRef.current?.focus();
+      inputRef.current?.click();
+    }
+  };
+
+  const handleInputClick = () => {
+    if (isIOS) {
+      // Force the virtual keyboard to show on iOS
+      inputRef.current?.focus();
     }
   };
 
@@ -134,6 +152,7 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
+          onClick={handleInputClick}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
