@@ -14,7 +14,8 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isIOS, setIsIOS] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -23,16 +24,22 @@ const StyledAutocomplete = ({
         onPlaceSelect(place);
       }
     }
+    setIsDropdownOpen(false);
   };
 
   const closeDropdown = useCallback(() => {
-    if (autocompleteRef.current) {
+    if (autocompleteRef.current && isDropdownOpen) {
       autocompleteRef.current.setTypes([]);
+      setIsDropdownOpen(false);
     }
-  }, [autocompleteRef]);
+  }, [isDropdownOpen, autocompleteRef]);
 
   useEffect(() => {
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+    setIsMobile(
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    );
 
     const handleClickOutside = (event) => {
       if (
@@ -44,19 +51,28 @@ const StyledAutocomplete = ({
     };
 
     const handleScroll = () => {
-      if (!isIOS) {
+      if (isDropdownOpen) {
         closeDropdown();
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    if (isMobile) {
+      document.addEventListener("touchmove", handleScroll, { passive: true });
+    } else {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+    }
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
+      if (isMobile) {
+        document.removeEventListener("touchmove", handleScroll);
+      } else {
+        window.removeEventListener("scroll", handleScroll);
+      }
     };
-  }, [closeDropdown, isIOS]);
+  }, [closeDropdown, isMobile, isDropdownOpen]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -71,19 +87,25 @@ const StyledAutocomplete = ({
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes(["establishment"]);
     }
-    if (isIOS) {
-      // Delay to ensure the keyboard is open before scrolling
+    setIsDropdownOpen(true);
+    if (isMobile) {
       setTimeout(() => {
-        inputRef.current?.scrollIntoViewIfNeeded(true);
+        inputRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }, 300);
     }
-  }, [isIOS, autocompleteRef]);
+  }, [isMobile, autocompleteRef]);
 
-  const handleInputClick = useCallback(() => {
-    if (isIOS) {
-      inputRef.current?.focus();
-    }
-  }, [isIOS]);
+  const handleInputBlur = useCallback(() => {
+    // Delay closing the dropdown to allow for item selection
+    setTimeout(() => {
+      if (isDropdownOpen) {
+        closeDropdown();
+      }
+    }, 150);
+  }, [isDropdownOpen, closeDropdown]);
 
   if (error) {
     return (
@@ -126,7 +148,7 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
-          onClick={handleInputClick}
+          onBlur={handleInputBlur}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
