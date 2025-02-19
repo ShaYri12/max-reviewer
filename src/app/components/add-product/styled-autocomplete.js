@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 
 const StyledAutocomplete = ({
@@ -15,6 +15,7 @@ const StyledAutocomplete = ({
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
   const [isAndroid, setIsAndroid] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -23,7 +24,15 @@ const StyledAutocomplete = ({
         onPlaceSelect(place);
       }
     }
+    setIsDropdownOpen(false);
   };
+
+  const closeDropdown = useCallback(() => {
+    if (autocompleteRef.current && isDropdownOpen) {
+      autocompleteRef.current.setTypes([]);
+      setIsDropdownOpen(false);
+    }
+  }, [isDropdownOpen]);
 
   useEffect(() => {
     setIsAndroid(/Android/i.test(navigator.userAgent));
@@ -33,31 +42,31 @@ const StyledAutocomplete = ({
         containerRef.current &&
         !containerRef.current.contains(event.target)
       ) {
-        inputRef.current?.blur();
+        closeDropdown();
       }
     };
 
-    const handleScrollOrWheel = () => {
-      if (!isAndroid && autocompleteRef.current) {
-        autocompleteRef.current.setTypes([]); // Close the dropdown
-        inputRef.current?.blur();
+    const handleScroll = (event) => {
+      if (!containerRef.current.contains(event.target)) {
+        closeDropdown();
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    if (!isAndroid) {
-      window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
-      window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
-    }
+    document.addEventListener("scroll", handleScroll, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("wheel", handleScroll, { passive: true });
+    window.addEventListener("touchmove", handleScroll, { passive: true });
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      if (!isAndroid) {
-        window.removeEventListener("scroll", handleScrollOrWheel);
-        window.removeEventListener("wheel", handleScrollOrWheel);
-      }
+      document.removeEventListener("scroll", handleScroll, { capture: true });
+      window.removeEventListener("wheel", handleScroll);
+      window.removeEventListener("touchmove", handleScroll);
     };
-  }, [isAndroid, autocompleteRef?.current]);
+  }, [closeDropdown]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -69,22 +78,19 @@ const StyledAutocomplete = ({
   };
 
   const handleInputFocus = () => {
+    setIsDropdownOpen(true);
     if (isAndroid) {
-      // For Android, we'll use a different approach
       setTimeout(() => {
         inputRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
-        // Force the virtual keyboard to show
-        inputRef.current?.click();
       }, 100);
     }
   };
 
   const handleTouchStart = (e) => {
     if (isAndroid) {
-      // Prevent default touch behavior on Android
       e.preventDefault();
       inputRef.current?.focus();
     }
