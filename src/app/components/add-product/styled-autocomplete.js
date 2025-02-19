@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 
 const StyledAutocomplete = ({
@@ -28,35 +30,35 @@ const StyledAutocomplete = ({
         containerRef.current &&
         !containerRef.current.contains(event.target)
       ) {
-        inputRef.current?.blur();
+        if (event.target !== inputRef.current) {
+          inputRef.current?.blur();
+        }
       }
-    };
-
-    const handleScrollOrWheel = () => {
-      if (autocompleteRef.current) {
-        autocompleteRef.current.setTypes([]); // Close the dropdown
-      }
-      inputRef.current?.blur();
     };
 
     document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
-    window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScrollOrWheel);
-      window.removeEventListener("wheel", handleScrollOrWheel);
     };
   }, []);
 
-  const handleLoad = (ref) => {
-    autocompleteRef.current = ref;
+  const handleLoad = (autocomplete) => {
+    if (autocompleteRef && typeof autocompleteRef === "object") {
+      autocompleteRef.current = autocomplete;
+    }
     setError(null);
   };
 
   const handleError = () => {
     setError("Failed to load Google Maps API. Please try again later.");
+  };
+
+  const handleInputTouch = (event) => {
+    event.stopPropagation();
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
   };
 
   if (error) {
@@ -83,7 +85,7 @@ const StyledAutocomplete = ({
   }
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative" ref={containerRef} onTouchEnd={handleInputTouch}>
       <Autocomplete
         onLoad={handleLoad}
         onError={handleError}
@@ -113,41 +115,36 @@ const StyledAutocomplete = ({
           background-color: white;
           font-family: inherit;
         }
-
         .pac-item {
           padding: 0.75rem 1rem;
           cursor: pointer;
           font-family: inherit;
           border-top: 1px solid #e5e7eb;
         }
-
         .pac-item:first-child {
           border-top: none;
         }
-
         .pac-item:hover {
           background-color: #f3f9fb;
         }
-
         .pac-item-query {
           font-size: 0.875rem;
           color: #17375f;
           font-weight: 500;
         }
-
         .pac-matched {
           color: #17375f;
           font-weight: 600;
         }
-
         .pac-icon {
           display: none;
         }
-
+        .pac-item:focus {
+          @apply bg-primary/10 outline-none;
+        }
         .pac-item-selected {
           background-color: #f3f9fb;
         }
-
         .pac-description {
           font-size: 0.75rem;
           color: #6c7278;
