@@ -43,6 +43,20 @@ const StyledAutocomplete = ({
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const handleLoad = (autocomplete) => {
     if (autocompleteRef && typeof autocompleteRef === "object") {
       autocompleteRef.current = autocomplete;
