@@ -185,35 +185,21 @@ const StyledAutocomplete = ({
   disabled,
 }) => {
   const inputRef = useRef(null);
-  const containerRef = useRef(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (document.activeElement === inputRef.current) {
-        inputRef.current.blur(); // Hide suggestions on scroll
-      }
+    const ensureFocus = () => {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     };
 
-    window.addEventListener("scroll", handleScroll, true);
+    inputRef.current?.addEventListener("touchstart", ensureFocus);
+    inputRef.current?.addEventListener("click", ensureFocus);
+
     return () => {
-      window.removeEventListener("scroll", handleScroll, true);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
-        inputRef.current?.blur();
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
+      inputRef.current?.removeEventListener("touchstart", ensureFocus);
+      inputRef.current?.removeEventListener("click", ensureFocus);
     };
   }, []);
 
@@ -237,12 +223,6 @@ const StyledAutocomplete = ({
     }
   };
 
-  const handleInputClick = () => {
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 50);
-  };
-
   if (error) {
     return (
       <div className="space-y-2">
@@ -264,7 +244,7 @@ const StyledAutocomplete = ({
   }
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative">
       <Autocomplete
         onLoad={handleLoad}
         onError={handleError}
@@ -283,7 +263,6 @@ const StyledAutocomplete = ({
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
-          onClick={handleInputClick} // Ensure focus when clicked
         />
       </Autocomplete>
     </div>
