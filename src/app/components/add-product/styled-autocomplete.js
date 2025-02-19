@@ -213,6 +213,7 @@ const StyledAutocomplete = ({
         // Get the current place predictions panel
         const predictionsPanel = document.querySelector(".pac-container");
         if (predictionsPanel) {
+          // Hide the predictions panel
           predictionsPanel.style.display = "none";
         }
 
@@ -225,10 +226,20 @@ const StyledAutocomplete = ({
       }
     };
 
-    window.addEventListener("scroll", hideSuggestionsOnScroll);
+    const handleScroll = () => {
+      // Check if the device is an iPhone or iPad
+      const isIOS =
+        /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      if (!isIOS) {
+        hideSuggestionsOnScroll();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", hideSuggestionsOnScroll);
+      window.removeEventListener("scroll", handleScroll);
       clearTimeout(scrollTimeout);
     };
   }, []);
