@@ -34,7 +34,7 @@ const withAuth = (WrappedComponent) => {
 
       if (!isJWT(token)) {
         console.log("object");
-        router.replace("/login");
+        // router.replace("/login");
       } else {
         setIsLoading(false);
       }
