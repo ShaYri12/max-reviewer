@@ -14,7 +14,7 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isIOS, setIsIOS] = useState(false);
+  const [isAndroidChrome, setIsAndroidChrome] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -27,12 +27,16 @@ const StyledAutocomplete = ({
 
   const closeDropdown = useCallback(() => {
     if (autocompleteRef.current) {
-      autocompleteRef.current.setTypes([]);
+      autocompleteRef.current.setTypes([]); // Close the dropdown
     }
+    inputRef.current?.blur();
   }, [autocompleteRef]);
 
   useEffect(() => {
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+    setIsAndroidChrome(
+      /Android/i.test(navigator.userAgent) &&
+        /Chrome/i.test(navigator.userAgent)
+    );
 
     const handleClickOutside = (event) => {
       if (
@@ -43,20 +47,35 @@ const StyledAutocomplete = ({
       }
     };
 
-    const handleScroll = () => {
-      if (!isIOS) {
+    const handleScrollOrWheel = () => {
+      closeDropdown();
+    };
+
+    const handleTouchMove = (e) => {
+      if (isAndroidChrome) {
         closeDropdown();
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
+    window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
+
+    if (isAndroidChrome) {
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+    }
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScrollOrWheel);
+      window.removeEventListener("wheel", handleScrollOrWheel);
+      if (isAndroidChrome) {
+        document.removeEventListener("touchmove", handleTouchMove);
+      }
     };
-  }, [closeDropdown, isIOS]);
+  }, [closeDropdown, isAndroidChrome]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -67,23 +86,12 @@ const StyledAutocomplete = ({
     setError("Failed to load Google Maps API. Please try again later.");
   };
 
-  const handleInputFocus = useCallback(() => {
+  const handleInputFocus = () => {
+    // Ensure the dropdown is open when the input is focused
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes(["establishment"]);
     }
-    if (isIOS) {
-      // Delay to ensure the keyboard is open before scrolling
-      setTimeout(() => {
-        inputRef.current?.scrollIntoViewIfNeeded(true);
-      }, 300);
-    }
-  }, [isIOS, autocompleteRef]);
-
-  const handleInputClick = useCallback(() => {
-    if (isIOS) {
-      inputRef.current?.focus();
-    }
-  }, [isIOS]);
+  };
 
   if (error) {
     return (
@@ -126,7 +134,6 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
-          onClick={handleInputClick}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
