@@ -14,7 +14,7 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -26,7 +26,7 @@ const StyledAutocomplete = ({
   };
 
   useEffect(() => {
-    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    setIsAndroid(/Android/i.test(navigator.userAgent));
 
     const handleClickOutside = (event) => {
       if (
@@ -38,26 +38,26 @@ const StyledAutocomplete = ({
     };
 
     const handleScrollOrWheel = () => {
-      if (!isMobile && autocompleteRef.current) {
+      if (!isAndroid && autocompleteRef.current) {
         autocompleteRef.current.setTypes([]); // Close the dropdown
         inputRef.current?.blur();
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    if (!isMobile) {
+    if (!isAndroid) {
       window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
       window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
     }
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      if (!isMobile) {
+      if (!isAndroid) {
         window.removeEventListener("scroll", handleScrollOrWheel);
         window.removeEventListener("wheel", handleScrollOrWheel);
       }
     };
-  }, [isMobile, autocompleteRef.current]);
+  }, [isAndroid, autocompleteRef?.current]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -69,14 +69,24 @@ const StyledAutocomplete = ({
   };
 
   const handleInputFocus = () => {
-    if (isMobile) {
-      // Scroll the page to the input field
+    if (isAndroid) {
+      // For Android, we'll use a different approach
       setTimeout(() => {
         inputRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
+        // Force the virtual keyboard to show
+        inputRef.current?.click();
       }, 100);
+    }
+  };
+
+  const handleTouchStart = (e) => {
+    if (isAndroid) {
+      // Prevent default touch behavior on Android
+      e.preventDefault();
+      inputRef.current?.focus();
     }
   };
 
@@ -121,6 +131,7 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
+          onTouchStart={handleTouchStart}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
