@@ -28,7 +28,7 @@ const StyledAutocomplete = ({
 
   const closeDropdown = useCallback(() => {
     if (autocompleteRef.current) {
-      autocompleteRef.current.setTypes([]); // Close the dropdown
+      autocompleteRef.current.setTypes([]);
     }
     if (!isIOS) {
       inputRef.current?.blur();
@@ -92,24 +92,27 @@ const StyledAutocomplete = ({
     setError("Failed to load Google Maps API. Please try again later.");
   };
 
-  const handleInputFocus = () => {
-    // Ensure the dropdown is open when the input is focused
+  const handleInputFocus = useCallback(() => {
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes(["establishment"]);
     }
     if (isIOS) {
-      // Force the virtual keyboard to show on iOS
-      inputRef.current?.focus();
-      inputRef.current?.click();
+      // Scroll the element into view on iOS
+      setTimeout(() => {
+        inputRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
     }
-  };
+  }, [isIOS, autocompleteRef]);
 
-  const handleInputClick = () => {
+  const handleInputClick = useCallback(() => {
     if (isIOS) {
-      // Force the virtual keyboard to show on iOS
+      // Force focus on iOS
       inputRef.current?.focus();
     }
-  };
+  }, [isIOS]);
 
   if (error) {
     return (
