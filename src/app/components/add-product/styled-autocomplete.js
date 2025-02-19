@@ -14,7 +14,6 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isAndroidChrome, setIsAndroidChrome] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const handlePlaceChanged = () => {
@@ -30,17 +29,9 @@ const StyledAutocomplete = ({
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes([]); // Close the dropdown
     }
-    if (isMobile) {
-      // On mobile, we need to blur the input to close the keyboard
-      inputRef.current?.blur();
-    }
-  }, [autocompleteRef, isMobile]);
+  }, [autocompleteRef]);
 
   useEffect(() => {
-    setIsAndroidChrome(
-      /Android/i.test(navigator.userAgent) &&
-        /Chrome/i.test(navigator.userAgent)
-    );
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
 
     const handleClickOutside = (event) => {
@@ -56,20 +47,14 @@ const StyledAutocomplete = ({
       closeDropdown();
     };
 
-    const handleTouchMove = (e) => {
-      closeDropdown();
-    };
-
     document.addEventListener("click", handleClickOutside);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    document.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
       window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [closeDropdown, isAndroidChrome, isMobile]);
+  }, [closeDropdown, isMobile]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -84,13 +69,6 @@ const StyledAutocomplete = ({
     // Ensure the dropdown is open when the input is focused
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes(["establishment"]);
-    }
-  };
-
-  const handleTouchStart = (e) => {
-    // Prevent default behavior for touch events on mobile
-    if (isMobile) {
-      e.preventDefault();
     }
   };
 
@@ -135,7 +113,6 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
-          onTouchStart={handleTouchStart}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
