@@ -171,7 +171,6 @@
 
 // export default StyledAutocomplete;
 
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -238,6 +237,12 @@ const StyledAutocomplete = ({
     }
   };
 
+  const handleInputClick = () => {
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
+  };
+
   if (error) {
     return (
       <div className="space-y-2">
@@ -278,11 +283,7 @@ const StyledAutocomplete = ({
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
-          onFocus={() => {
-            setTimeout(() => {
-              inputRef.current?.focus();
-            }, 100);
-          }} // Ensure focus on mobile
+          onClick={handleInputClick} // Ensure focus when clicked
         />
       </Autocomplete>
     </div>
