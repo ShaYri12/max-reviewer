@@ -24,24 +24,24 @@ const StyledAutocomplete = ({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
-        if (event.target !== inputRef.current) {
-          inputRef.current?.blur();
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (
+  //       containerRef.current &&
+  //       !containerRef.current.contains(event.target)
+  //     ) {
+  //       if (event.target !== inputRef.current) {
+  //         inputRef.current?.blur();
+  //       }
+  //     }
+  //   };
 
-    document.addEventListener("click", handleClickOutside);
+  //   document.addEventListener("click", handleClickOutside);
 
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("click", handleClickOutside);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const handleScroll = () => {
