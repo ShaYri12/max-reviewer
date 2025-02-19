@@ -14,7 +14,6 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isAndroidChrome, setIsAndroidChrome] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
 
   const handlePlaceChanged = () => {
@@ -30,16 +29,9 @@ const StyledAutocomplete = ({
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes([]);
     }
-    if (!isIOS) {
-      inputRef.current?.blur();
-    }
-  }, [isIOS, autocompleteRef]);
+  }, [autocompleteRef]);
 
   useEffect(() => {
-    setIsAndroidChrome(
-      /Android/i.test(navigator.userAgent) &&
-        /Chrome/i.test(navigator.userAgent)
-    );
     setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
 
     const handleClickOutside = (event) => {
@@ -51,37 +43,20 @@ const StyledAutocomplete = ({
       }
     };
 
-    const handleScrollOrWheel = () => {
+    const handleScroll = () => {
       if (!isIOS) {
         closeDropdown();
       }
     };
 
-    const handleTouchMove = (e) => {
-      if (isAndroidChrome) {
-        closeDropdown();
-      }
-    };
-
     document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
-    window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
-
-    if (isAndroidChrome) {
-      document.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
-    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScrollOrWheel);
-      window.removeEventListener("wheel", handleScrollOrWheel);
-      if (isAndroidChrome) {
-        document.removeEventListener("touchmove", handleTouchMove);
-      }
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, [closeDropdown, isAndroidChrome, isIOS]);
+  }, [closeDropdown, isIOS]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -97,19 +72,15 @@ const StyledAutocomplete = ({
       autocompleteRef.current.setTypes(["establishment"]);
     }
     if (isIOS) {
-      // Scroll the element into view on iOS
+      // Delay to ensure the keyboard is open before scrolling
       setTimeout(() => {
-        inputRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 100);
+        inputRef.current?.scrollIntoViewIfNeeded(true);
+      }, 300);
     }
   }, [isIOS, autocompleteRef]);
 
   const handleInputClick = useCallback(() => {
     if (isIOS) {
-      // Force focus on iOS
       inputRef.current?.focus();
     }
   }, [isIOS]);
