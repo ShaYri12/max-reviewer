@@ -185,6 +185,7 @@ const StyledAutocomplete = ({
   disabled,
 }) => {
   const inputRef = useRef(null);
+  const autocompleteInstance = useRef(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -203,7 +204,23 @@ const StyledAutocomplete = ({
     };
   }, []);
 
+  // Hides autocomplete suggestions when scrolling
+  useEffect(() => {
+    const hideSuggestionsOnScroll = () => {
+      if (autocompleteInstance.current) {
+        autocompleteInstance.current.set("place", null); // Reset autocomplete
+      }
+    };
+
+    window.addEventListener("scroll", hideSuggestionsOnScroll);
+
+    return () => {
+      window.removeEventListener("scroll", hideSuggestionsOnScroll);
+    };
+  }, []);
+
   const handleLoad = (autocomplete) => {
+    autocompleteInstance.current = autocomplete;
     if (autocompleteRef && typeof autocompleteRef === "object") {
       autocompleteRef.current = autocomplete;
     }
