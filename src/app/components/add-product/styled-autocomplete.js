@@ -27,12 +27,36 @@ const StyledAutocomplete = ({
 
   const closeDropdown = useCallback(() => {
     if (autocompleteRef.current) {
-      autocompleteRef.current.setTypes([]); // Close the dropdown
+      autocompleteRef.current.setTypes([]);
+      const pacContainer = document.querySelector(".pac-container");
+      if (pacContainer) {
+        pacContainer.style.display = "none";
+      }
     }
   }, [autocompleteRef]);
 
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
+
+  const debouncedCloseDropdown = useCallback(debounce(closeDropdown, 100), [
+    closeDropdown,
+  ]);
+
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+
+    const handleScroll = () => {
+      debouncedCloseDropdown();
+    };
+
+    const handleTouchMove = () => {
+      debouncedCloseDropdown();
+    };
 
     const handleClickOutside = (event) => {
       if (
@@ -43,18 +67,16 @@ const StyledAutocomplete = ({
       }
     };
 
-    const handleScroll = () => {
-      closeDropdown();
-    };
-
-    document.addEventListener("click", handleClickOutside);
     window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("touchmove", handleTouchMove, { passive: true });
+    document.addEventListener("click", handleClickOutside);
 
     return () => {
-      document.removeEventListener("click", handleClickOutside);
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("click", handleClickOutside);
     };
-  }, [closeDropdown, isMobile]);
+  }, [closeDropdown, debouncedCloseDropdown]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -66,7 +88,6 @@ const StyledAutocomplete = ({
   };
 
   const handleInputFocus = () => {
-    // Ensure the dropdown is open when the input is focused
     if (autocompleteRef.current) {
       autocompleteRef.current.setTypes(["establishment"]);
     }
