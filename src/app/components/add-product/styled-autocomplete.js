@@ -202,7 +202,7 @@ const StyledAutocomplete = ({
     };
   }, []);
 
-  // Modified scroll behavior to only hide suggestions without affecting keyboard
+  // Modified scroll behavior: opacity and pointer-events
   useEffect(() => {
     let scrollTimeout;
     const hideSuggestionsOnScroll = () => {
@@ -213,33 +213,25 @@ const StyledAutocomplete = ({
         // Get the current place predictions panel
         const predictionsPanel = document.querySelector(".pac-container");
         if (predictionsPanel) {
-          // Hide the predictions panel
-          predictionsPanel.style.display = "none";
+          // Hide the predictions panel using opacity and pointer-events
+          predictionsPanel.style.opacity = "0";
+          predictionsPanel.style.pointerEvents = "none";
         }
 
         // Show predictions panel again after scroll stops
         scrollTimeout = setTimeout(() => {
           if (predictionsPanel) {
-            predictionsPanel.style.display = "block";
+            predictionsPanel.style.opacity = "1";
+            predictionsPanel.style.pointerEvents = "auto";
           }
         }, 100);
       }
     };
 
-    const handleScroll = () => {
-      // Check if the device is an iPhone or iPad
-      const isIOS =
-        /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-      if (!isIOS) {
-        hideSuggestionsOnScroll();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", hideSuggestionsOnScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", hideSuggestionsOnScroll);
       clearTimeout(scrollTimeout);
     };
   }, []);
