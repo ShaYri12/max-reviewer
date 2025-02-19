@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 
 const StyledAutocomplete = ({
@@ -14,8 +12,6 @@ const StyledAutocomplete = ({
   const inputRef = useRef(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -24,55 +20,35 @@ const StyledAutocomplete = ({
         onPlaceSelect(place);
       }
     }
-    setIsDropdownOpen(false);
   };
 
-  const closeDropdown = useCallback(() => {
-    if (autocompleteRef.current && isDropdownOpen) {
-      autocompleteRef.current.setTypes([]);
-      setIsDropdownOpen(false);
-    }
-  }, [isDropdownOpen, autocompleteRef]);
-
   useEffect(() => {
-    setIsMobile(
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      )
-    );
-
     const handleClickOutside = (event) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target)
       ) {
-        closeDropdown();
+        inputRef.current?.blur();
       }
     };
 
-    const handleScroll = () => {
-      if (isDropdownOpen) {
-        closeDropdown();
+    const handleScrollOrWheel = () => {
+      if (autocompleteRef.current) {
+        autocompleteRef.current.setTypes([]); // Close the dropdown
       }
+      inputRef.current?.blur();
     };
 
     document.addEventListener("click", handleClickOutside);
-
-    if (isMobile) {
-      document.addEventListener("touchmove", handleScroll, { passive: true });
-    } else {
-      window.addEventListener("scroll", handleScroll, { passive: true });
-    }
+    window.addEventListener("scroll", handleScrollOrWheel, { passive: true });
+    window.addEventListener("wheel", handleScrollOrWheel, { passive: true });
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      if (isMobile) {
-        document.removeEventListener("touchmove", handleScroll);
-      } else {
-        window.removeEventListener("scroll", handleScroll);
-      }
+      window.removeEventListener("scroll", handleScrollOrWheel);
+      window.removeEventListener("wheel", handleScrollOrWheel);
     };
-  }, [closeDropdown, isMobile, isDropdownOpen]);
+  }, []);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -82,30 +58,6 @@ const StyledAutocomplete = ({
   const handleError = () => {
     setError("Failed to load Google Maps API. Please try again later.");
   };
-
-  const handleInputFocus = useCallback(() => {
-    if (autocompleteRef.current) {
-      autocompleteRef.current.setTypes(["establishment"]);
-    }
-    setIsDropdownOpen(true);
-    if (isMobile) {
-      setTimeout(() => {
-        inputRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 300);
-    }
-  }, [isMobile, autocompleteRef]);
-
-  const handleInputBlur = useCallback(() => {
-    // Delay closing the dropdown to allow for item selection
-    setTimeout(() => {
-      if (isDropdownOpen) {
-        closeDropdown();
-      }
-    }, 150);
-  }, [isDropdownOpen, closeDropdown]);
 
   if (error) {
     return (
@@ -147,8 +99,6 @@ const StyledAutocomplete = ({
           name={name}
           value={value}
           onChange={onChange}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
