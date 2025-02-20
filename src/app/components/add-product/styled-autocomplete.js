@@ -45,12 +45,18 @@ const StyledAutocomplete = ({
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
 
+    let scrollTimeout;
     const handleScroll = () => {
-      closeDropdown();
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        closeDropdown();
+      }, 100);
     };
 
-    const handleTouchMove = () => {
-      closeDropdown();
+    const handleTouchMove = (e) => {
+      if (!inputRef.current.contains(e.target)) {
+        handleScroll();
+      }
     };
 
     const handleClickOutside = (event) => {
@@ -62,21 +68,21 @@ const StyledAutocomplete = ({
       }
     };
 
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-      capture: true,
-    });
-    document.addEventListener("touchmove", handleTouchMove, {
-      passive: true,
-      capture: true,
-    });
+    // Delay adding scroll listeners to avoid interference with initial focus
+    const timer = setTimeout(() => {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: true,
+      });
+    }, 500);
+
     document.addEventListener("click", handleClickOutside);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll, { capture: true });
-      document.removeEventListener("touchmove", handleTouchMove, {
-        capture: true,
-      });
+      clearTimeout(timer);
+      clearTimeout(scrollTimeout);
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("click", handleClickOutside);
     };
   }, [closeDropdown]);
@@ -97,6 +103,11 @@ const StyledAutocomplete = ({
         fields: ["name", "formatted_address"],
       });
     }
+  };
+
+  const handleInputClick = (e) => {
+    e.preventDefault();
+    inputRef.current.focus();
   };
 
   if (error) {
@@ -140,6 +151,7 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
+          onClick={handleInputClick}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
