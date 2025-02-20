@@ -19,7 +19,7 @@ const StyledAutocomplete = ({
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
-      if (place.name) {
+      if (place && place.name) {
         onPlaceSelect(place);
       }
     }
@@ -27,35 +27,30 @@ const StyledAutocomplete = ({
 
   const closeDropdown = useCallback(() => {
     if (autocompleteRef.current) {
-      autocompleteRef.current.setTypes([]);
-      const pacContainer = document.querySelector(".pac-container");
-      if (pacContainer) {
-        pacContainer.style.display = "none";
-      }
+      // Force close the dropdown
+      autocompleteRef.current.setOptions({ types: [] });
+      autocompleteRef.current.set("place", null);
+    }
+    // Hide the pac-container
+    const pacContainer = document.querySelector(".pac-container");
+    if (pacContainer) {
+      pacContainer.style.visibility = "hidden";
+    }
+    // Blur the input
+    if (inputRef.current) {
+      inputRef.current.blur();
     }
   }, [autocompleteRef]);
-
-  const debounce = (func, wait) => {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  };
-
-  const debouncedCloseDropdown = useCallback(debounce(closeDropdown, 100), [
-    closeDropdown,
-  ]);
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
 
     const handleScroll = () => {
-      debouncedCloseDropdown();
+      closeDropdown();
     };
 
     const handleTouchMove = () => {
-      debouncedCloseDropdown();
+      closeDropdown();
     };
 
     const handleClickOutside = (event) => {
@@ -67,16 +62,24 @@ const StyledAutocomplete = ({
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    document.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+      capture: true,
+    });
+    document.addEventListener("touchmove", handleTouchMove, {
+      passive: true,
+      capture: true,
+    });
     document.addEventListener("click", handleClickOutside);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("scroll", handleScroll, { capture: true });
+      document.removeEventListener("touchmove", handleTouchMove, {
+        capture: true,
+      });
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [closeDropdown, debouncedCloseDropdown]);
+  }, [closeDropdown]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -89,7 +92,10 @@ const StyledAutocomplete = ({
 
   const handleInputFocus = () => {
     if (autocompleteRef.current) {
-      autocompleteRef.current.setTypes(["establishment"]);
+      autocompleteRef.current.setOptions({
+        types: ["establishment"],
+        fields: ["name", "formatted_address"],
+      });
     }
   };
 
