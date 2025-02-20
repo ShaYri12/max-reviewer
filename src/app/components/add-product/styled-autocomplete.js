@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Autocomplete } from "@react-google-maps/api";
-import { debounce } from "lodash";
 
 const StyledAutocomplete = ({
   value,
@@ -16,47 +15,47 @@ const StyledAutocomplete = ({
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
-      if (place && place.name) {
+      if (place.name) {
         onPlaceSelect(place);
-        setIsDropdownOpen(false);
       }
     }
   };
 
   const closeDropdown = useCallback(() => {
     if (autocompleteRef.current) {
-      // Force close the dropdown
-      autocompleteRef.current.setOptions({ types: [] });
-      autocompleteRef.current.set("place", null);
+      autocompleteRef.current.setTypes([]);
+      const pacContainer = document.querySelector(".pac-container");
+      if (pacContainer) {
+        pacContainer.style.display = "none";
+      }
     }
-    // Hide the pac-container
-    const pacContainer = document.querySelector(".pac-container");
-    if (pacContainer) {
-      pacContainer.style.visibility = "hidden";
-    }
-    setIsDropdownOpen(false);
   }, [autocompleteRef]);
+
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
+
+  const debouncedCloseDropdown = useCallback(debounce(closeDropdown, 100), [
+    closeDropdown,
+  ]);
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
 
-    const debouncedCloseDropdown = debounce(closeDropdown, 100);
-
     const handleScroll = () => {
-      if (!isMobile || !isDropdownOpen) {
-        debouncedCloseDropdown();
-      }
+      debouncedCloseDropdown();
     };
 
-    const handleTouchMove = (e) => {
-      if (!inputRef.current.contains(e.target)) {
-        debouncedCloseDropdown();
-      }
+    const handleTouchMove = () => {
+      debouncedCloseDropdown();
     };
 
     const handleClickOutside = (event) => {
@@ -68,26 +67,16 @@ const StyledAutocomplete = ({
       }
     };
 
-    // Delay adding scroll listeners to avoid interference with initial focus
-    const timer = setTimeout(() => {
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      if (!isMobile) {
-        document.addEventListener("touchmove", handleTouchMove, {
-          passive: true,
-        });
-      }
-    }, 500);
-
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("touchmove", handleTouchMove, { passive: true });
     document.addEventListener("click", handleClickOutside);
 
     return () => {
-      clearTimeout(timer);
-      debouncedCloseDropdown.cancel();
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [closeDropdown, isMobile, isDropdownOpen]);
+  }, [closeDropdown, debouncedCloseDropdown]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -100,26 +89,8 @@ const StyledAutocomplete = ({
 
   const handleInputFocus = () => {
     if (autocompleteRef.current) {
-      autocompleteRef.current.setOptions({
-        types: ["establishment"],
-        fields: ["name", "formatted_address"],
-      });
+      autocompleteRef.current.setTypes(["establishment"]);
     }
-    setIsDropdownOpen(true);
-  };
-
-  const handleInputClick = (e) => {
-    e.preventDefault();
-    inputRef.current.focus();
-  };
-
-  const handleInputBlur = () => {
-    // Delay closing the dropdown to allow for selection
-    setTimeout(() => {
-      if (!isDropdownOpen) {
-        closeDropdown();
-      }
-    }, 200);
   };
 
   if (error) {
@@ -163,8 +134,6 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          onClick={handleInputClick}
           disabled={disabled}
           placeholder="Search for a place"
           className="w-full px-3 py-2 border border-[#71C9ED] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C9ED] focus:border-transparent"
