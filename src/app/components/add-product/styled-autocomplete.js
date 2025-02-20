@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Autocomplete } from "@react-google-maps/api";
+import { debounce } from "lodash";
 
 const StyledAutocomplete = ({
   value,
@@ -15,12 +16,14 @@ const StyledAutocomplete = ({
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
       if (place && place.name) {
         onPlaceSelect(place);
+        setIsDropdownOpen(false);
       }
     }
   };
@@ -36,26 +39,23 @@ const StyledAutocomplete = ({
     if (pacContainer) {
       pacContainer.style.visibility = "hidden";
     }
-    // Blur the input
-    if (inputRef.current) {
-      inputRef.current.blur();
-    }
+    setIsDropdownOpen(false);
   }, [autocompleteRef]);
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
 
-    let scrollTimeout;
+    const debouncedCloseDropdown = debounce(closeDropdown, 100);
+
     const handleScroll = () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        closeDropdown();
-      }, 100);
+      if (!isMobile || !isDropdownOpen) {
+        debouncedCloseDropdown();
+      }
     };
 
     const handleTouchMove = (e) => {
       if (!inputRef.current.contains(e.target)) {
-        handleScroll();
+        debouncedCloseDropdown();
       }
     };
 
@@ -71,21 +71,23 @@ const StyledAutocomplete = ({
     // Delay adding scroll listeners to avoid interference with initial focus
     const timer = setTimeout(() => {
       window.addEventListener("scroll", handleScroll, { passive: true });
-      document.addEventListener("touchmove", handleTouchMove, {
-        passive: true,
-      });
+      if (!isMobile) {
+        document.addEventListener("touchmove", handleTouchMove, {
+          passive: true,
+        });
+      }
     }, 500);
 
     document.addEventListener("click", handleClickOutside);
 
     return () => {
       clearTimeout(timer);
-      clearTimeout(scrollTimeout);
+      debouncedCloseDropdown.cancel();
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [closeDropdown]);
+  }, [closeDropdown, isMobile, isDropdownOpen]);
 
   const handleLoad = (ref) => {
     autocompleteRef.current = ref;
@@ -103,11 +105,21 @@ const StyledAutocomplete = ({
         fields: ["name", "formatted_address"],
       });
     }
+    setIsDropdownOpen(true);
   };
 
   const handleInputClick = (e) => {
     e.preventDefault();
     inputRef.current.focus();
+  };
+
+  const handleInputBlur = () => {
+    // Delay closing the dropdown to allow for selection
+    setTimeout(() => {
+      if (!isDropdownOpen) {
+        closeDropdown();
+      }
+    }, 200);
   };
 
   if (error) {
@@ -151,6 +163,7 @@ const StyledAutocomplete = ({
           value={value}
           onChange={onChange}
           onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
           onClick={handleInputClick}
           disabled={disabled}
           placeholder="Search for a place"
